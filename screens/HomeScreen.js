@@ -1,12 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import {Pressable, FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
-import {auth,  db} from '../firebase';
+import {Pressable, FlatList, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, RefreshControl, ActivityIndicator, Button, ScrollView} from 'react-native';
+import {auth,  db, app} from '../firebase';
 import { signOut } from 'firebase/auth';
-import { collection, getDocs, query } from "firebase/firestore";
 import {Icon} from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Camera, CameraType } from 'expo-camera';
+import NavBar from './navbar';
+import {addDoc, collection, doc, getDoc, getDocFromCache, getDocs, where, query, QuerySnapshot, updateDoc, setDoc, documentId, collectionGroup, DocumentReference, DocumentSnapshot, orderBy, arrayUnion, arrayRemove} from 'firebase/firestore';
+import { ref } from 'firebase/storage';
 
 const HomeScreen = ({navigation}) => {
   
@@ -14,38 +16,28 @@ const HomeScreen = ({navigation}) => {
   const refresh = () => window.location.reload()
   const r_posts= query(collection(db,"posts"));
 
+  const [liked, setliked] = useState(false)
+  const [comment, setcomment] = useState([])
+  const [share, setshare] = useState([])
+
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
-  const [liked, setLiked] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
+  const [userData, setUserData] = useState([]);
 
-  const [commented, setCommented] = useState(false);
 
-  function toggleCameraType() {
-    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-  }
+
+  useEffect(()=> {
+
+    async function  fetchData(){
   
-
-  const comments = () => {
-
-
-    <TextInput 
-      placeholder='Enter a comment'
-
-    ></TextInput>
-
-  }
-  const [shared, setShared] = useState(false);
- 
-
-  useEffect(async()=> {
-
-    const get_posts = await getDocs(r_posts) 
-
+    const snapshot = await getDocs(r_posts) 
+  
     const posts = []
-
-    get_posts.forEach((doc) => {
-
+  
+    posts.forEach((doc) => {
+  
       const {Email, image, post, Username, Share, Like, Comment} = doc.data()
       
       posts.push ({
@@ -54,16 +46,27 @@ const HomeScreen = ({navigation}) => {
         image,
         post,
         Username,
-        Share,
-        Like,
-        Comment,
       })
     })
-    setPosts(posts)
-  },[])       
+
+    setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+  }
+  fetchData()
+
+  },[]) 
+
+  //save likes in database
+
+  //save comments in database
+
+  //show comments in drop menu
+
+  //save shares in database
+
    
+
     
-    const SignOut = () =>  {
+  const SignOut = () =>  {
 
         signOut(auth)
         .then(() => {
@@ -71,114 +74,145 @@ const HomeScreen = ({navigation}) => {
         })
     
         .catch(error => alert(error.message))
-    }
+  }
 
 
-    return (
+  return (
         
         <View  style  =  {styles.page}>
-            
-            <TouchableOpacity
-                style = {styles.input}
-                onPress={() =>navigation.navigate('AddPosts')}
-            >
-            <Text style={styles.Text}>Add Posts</Text>
-            </ TouchableOpacity>
 
-            <TouchableOpacity>
-              <Icon
-                style = {styles.input}
-                onPress={() =>navigation.navigate('Profile')}
-            />
-            <Text style={styles.Text}>Profile</Text>
-            </ TouchableOpacity>
+<FlatList 
+data = {posts}
 
-            <TouchableOpacity>
-              <Icon
-                style = {styles.input}
-                onPress={() =>navigation.navigate('camera')}
-            />
-            <Text style={styles.Text}>Profile</Text>
-            </ TouchableOpacity>
+renderItem = {({item}) => (
+  
 
-            <TouchableOpacity
-                style = {styles.input}
-                onPress={SignOut}
-            >
-            <Text style={styles.Text}>SignOut</Text>
-            </ TouchableOpacity>
+<Pressable>
 
-        
+  <View>
+        <Text style = {styles.fontStyle}>
 
-            <FlatList 
-              data = {posts}
-              renderItem = {({item}) => (
+      
+      {item.Email}
+      {'\n'}
+      {item.post}
+      {'\n'}
 
-              <Pressable>
-                <View>
+      {item.image && <Image source={{uri:item.image}} style={{ width: 300, height: 900, textAlign: 'center' }} />}
+      {'\n'}
+      {'\n'}
 
-                  <Text style = {styles.fontStyle}>
-                    {item.Email}
-                    {'\n'}
-                    {item.post}
-                    {'\n'}
-                    {item.Like}
-                    {'\n'}
+      
 
-              
-                    {item.image && <Image source={{ uri: item.image }} style={{ width: 300, height: 900, textAlign: 'center' }} />}
-                    {'\n'}
-                    {'\n'}
-                    
-         
+      <TouchableOpacity style={styles.button} onPress={() => setliked((isLiked)=> !isLiked)}>
+        <MaterialCommunityIcons
+          name={"thumb-up"}
+          size={32}
+          color = "green"
+          
+         /> 
 
-                    
-                  
-                    <Pressable>
-                      <MaterialCommunityIcons
+      </TouchableOpacity>
+      
 
-                        name={liked ? "heart" : "heart-outline"}
-                        size={32}
-                        color={liked ? "blue" : "black"}
-                       />        
-                    </Pressable>
-                    
-                  
-                    
+    
+      <Text>{'\t'}</Text>
 
-                    <Text>{'\t'}</Text>
+      <Pressable style={styles.button}>
+        <MaterialCommunityIcons
+          name={"comment-text"}
+          size={32}
+         /> 
 
-                    <Pressable style={styles.button}>
-                      <MaterialCommunityIcons
-                        name={"comment-text"}
-                        size={32}
-                       /> 
+      </Pressable>
 
-                           
-                    </Pressable>
+      <Text>{'\t'}</Text>
 
-                    <Text>{'\t'}</Text>
+      <Pressable style={styles.button}>
+        <MaterialCommunityIcons
+          name={"share"}
+          size={32}
+         /> 
 
-                    <Pressable style={styles.button}>
-                      <MaterialCommunityIcons
-                        name={"share"}
-                        size={32}
-                       /> 
+             
+      </Pressable>
 
-                           
-                    </Pressable>
+
+   
+      </Text>
+      
+    
+  </View>
  
-                 </Text>
+</Pressable>
 
-                  
-                </View>
+   )} 
+/>  
+
+            <View style = {styles.nav}>
+
+
+                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.home}>
+                      <MaterialCommunityIcons
+
+                        name={'home'}
+                        color = 'green'
+                        size={40}
+                       />        
+
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.navigation}>
+                      <MaterialCommunityIcons
+
+                        name={'bell-circle'}
+                        color = 'green'
+                        size={40}
+                       />        
+
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() =>navigation.navigate('AddPosts')} style = {styles.Post}>
+                      <MaterialCommunityIcons
+
+                        name={'post-outline'}
+                        color = 'green'
+                        size={40}
+                       />        
+
+                    </TouchableOpacity>
+
+                   
+                    <TouchableOpacity onPress={() =>navigation.navigate('Profile')} style = {styles.profile}>
+                      <MaterialCommunityIcons
+
+                        name={'face-man-profile'}
+                        color = 'green'
+                        size={40}
+                       />        
+
+                    </TouchableOpacity>
+
+                    
+                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.Search}>
+                      <MaterialCommunityIcons
+
+                        name={'account-search'}
+                        color = 'green'
+                        size={40}
+                       />        
+
+                    </TouchableOpacity>
                
-              </Pressable>
-              
-                 )}            
-             />  
+
+           
+           
+            </View>  
+                       
+                    
         </View>
-    );
+        
+  );
 };
 
 
@@ -230,7 +264,60 @@ const styles = StyleSheet.create({
 
       },
 
+      profile:{
+
+        marginTop: -2,
+        marginBottom: 22,
+        marginLeft: 340,
+        marginRight: 10
+      
+      },
+
+      home:{
+
+        marginRight: 340,
+        marginBottom: -39,
+        marginLeft: 13,
+      },
+
+      Search:{
+
+        marginRight: 26,
+        marginBottom: 35,
+        marginLeft: 270,
+        marginTop: -60
+
+      },
+
+
+
+      navigation:{
+
+        marginRight: 20,
+        marginBottom: -39,
+        marginLeft: 90,
+     
+
+
+      },
+
+      Post :{
+
+        marginRight: 20,
+        marginBottom: -39,
+        marginLeft: 180,
+
+      },
+
+      nav:{
+        backgroundColor: `#ffebcd`
+      }
+
+
     
-  });
+});
 
 export  default HomeScreen;
+
+
+
