@@ -1,16 +1,14 @@
 import React from 'react';
-import { useContext, useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import {ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
-import { useFonts } from 'expo-font';
+import {useState} from 'react';
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput } from 'react-native';
 import {auth, db, storage} from '../firebase';
-import { getAuth,createUserWithEmailAndPassword,sendEmailVerification } from 'firebase/auth';
-import LoginScreen from './LoginScreen';
-import HomeScreen from './HomeScreen';
-import {addDoc, collection} from 'firebase/firestore';
-import * as ImagePicker from 'expo-image-picker'
-import { async } from '@firebase/util';
-import { ref, uploadBytes, updateMetadata, uploadBytesResumable } from 'firebase/storage';
+import { getAuth} from 'firebase/auth';
+import {addDoc, collection, getFirestore} from 'firebase/firestore';
+import { serverTimestamp } from 'firebase/firestore';
+import ButtonNavBar from '../compnents/ButtonNavBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
+
 
 const AddPosts = ({navigation}) => {
 
@@ -18,15 +16,20 @@ const AddPosts = ({navigation}) => {
   const [Username, setUsername] = useState('');
   const [image, setImage] = useState (null);
   const [post, setPost] = useState('');
-  const [Like, setLike] = useState('');
+  const [liked, setLike] = useState([]);
   const [Share, setShare] = useState ('');
-  const [Comment, setComment] = useState('');
+  const [comment, setComment] = useState([]);
+
+  const auth = getAuth();
+  const db = getFirestore();
 
 
 
   const pickImage = async () => {
-    
-    let set_image = await ImagePicker.launchCameraAsync({
+
+    let permission = ImagePicker.getCameraPermissionsAsync()
+  
+    let set_image = await ImagePicker.launchIm({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
@@ -35,48 +38,41 @@ const AddPosts = ({navigation}) => {
       setImage(set_image.assets[0].uri);
     }
   };
-
-  const metadata = { contentType: 'image/jpg', };
-
-  const storageRef = ref(storage, 'images');
-  const upload_image = uploadBytesResumable(storageRef, image);
-
   
-  const submitData = () => {
-    upload_image.then((snapshot) => {
-      console.log("Uploaded");
+  
+  const pickCamera = async () => {
+    
+    let set_image = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    }).then((image) => {
+      setImage(image.assets[0].uri)
     });
-  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-    console.log('File available at', downloadURL);
-  });
-}
+  };
+
+
 
   const create_post = async() => {
     try {
-      addDoc(collection(db,"posts"),{
+     addDoc(collection(db,"posts"),{
+        timestamp: serverTimestamp(),
         Email: auth.currentUser?.email,
         post: post,
         image: image,
         Username: Username,
-        Like: Like, 
-        Share: Share,
-        Comment: Comment,
       });
-      setPost('');
-      setEmail('');
-      setUsername('');
-      setImage('');
-      setLike('');
-      setShare('');
-      setComment('');
     }
     catch (e) {
       console.error("Error adding document: ", e);
     }
   };
 
+  
+
   return (
     <View style = {styles.page} >
+      <SafeAreaView>
       <ScrollView>
       <TextInput style = {styles.post}
       
@@ -96,8 +92,17 @@ const AddPosts = ({navigation}) => {
 
     </ TouchableOpacity>
 
-    <Button title="Pick an image from camera roll" onPress={pickImage} />
+    <TouchableOpacity
+        style = {styles.input}
+        onPress={pickCamera}
+    >
+    <Text style={styles.Text}>Upload an image using the camera</Text>
+
+    </ TouchableOpacity>
     </ScrollView>
+    
+    <ButtonNavBar navigation={navigation}/>
+    </SafeAreaView>
     </View>
     
   );
@@ -135,5 +140,4 @@ const styles = StyleSheet.create({
   },
 
 })
-
 
