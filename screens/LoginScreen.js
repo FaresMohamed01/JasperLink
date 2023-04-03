@@ -1,17 +1,27 @@
 import React from 'react';
 import { useContext, useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import {ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import {auth} from '../firebase';
-import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import SignUpScreen from './SignUpScreen';
-import HomeScreen from './HomeScreen';
+import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
+import { styles } from './Style';
+
+
 
 const LoginScreen = ({navigation}) => {
     const [Email, onChangeEmail] = useState(null);
     const [Password, onChangePassword] = useState(null);
     const [buttonText, setButtonText] = useState("Login")
+    const auth = getAuth();
+
+
+    const actionCodeSettings = {
+        url: 'https://capstoneproject-7ce43.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+        handleCodeInApp: true,
+        dynamicLinkDomain: 'capproject.page.link'
+      };
+    
 
     useEffect(() => {
         const loggedin = auth.beforeAuthStateChanged(user => {
@@ -30,81 +40,107 @@ const LoginScreen = ({navigation}) => {
 
      }
 
+     const forget_password = ({navigation}) => {
+        
+        sendPasswordResetEmail(auth, Email, actionCodeSettings)
+        .catch(error => alert(error.message))
+      }
 
-    return (
-        <SafeAreaView style={styles.container}>
+      const delete_user = ({navigation}) => {
+        deleteUser(auth, Email, Password)
+        .catch(error => alert(error.message))
+      }
 
-            <Image
+
+      return (
+        <View style = {styles.container}>
+            <ImageBackground style = {styles.background_image} source={require('../assets/background.jpg')}>
+            <ScrollView>
+            <Image style={styles.image}
                 source={require('../assets/ManhattanLogo.png')}>
             </Image>
 
-            <TextInput
-                style={styles.inputTop}
-                onChangeText={onChangeEmail}
-                placeholder = "admin@manhattan.edu"
-                keyboardType="email-address"
-                
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={onChangePassword}
-                value={Password}
-                placeholder="Password"
-                keyboardType="default"
-                verticalAlign='middle'
-                secureTextEntry
-            />
+            <View style={styles.signup_border}>
+           
+                <Text style={styles.signup_text}> Login </Text>
 
-            <Button  style = {styles.button}
-                onPress = {LoginAuth}
-                title={buttonText}
-                
-            ></Button>
+                <Text style={styles.email}> Email </Text>
 
-        </SafeAreaView>
+                <View style={styles.email_border}>
+
+                    <TextInput 
+                        style = {styles.email_text}
+                        value = {Email}
+                        onChangeText = {onChangeEmail}
+                        placeholder = " example@manhattan.edu"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        autoCorrect={false}
+                    />
+            
+                    <Image style={styles.email_icon}
+                        source={require('../assets/email_image.png')}>
+                    </Image>
+
+                </View>
+
+                    <Text style={styles.email}> Password </Text>
+
+                    <View style={styles.email_border}>
+
+                        <TextInput 
+                            style = {styles.password_text}
+                            value = {Password}
+                            secureTextEntry
+                            onChangeText = {onChangePassword}
+                            placeholder = "Password"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+            
+                        <Image style={styles.password_icon}
+                            source={require('../assets/password_icon.png')}>
+                        </Image>
+            
+                     </View>
+
+                    <Text style={styles.NoAccountButton}>Don't have an account?</Text>
+
+                    <TouchableOpacity
+                        onPress={() =>navigation.navigate('SignUp')}
+                    >
+                    <Text style={styles.NoAccountSignUpButton}>Sign Up</Text>
+
+                    </ TouchableOpacity>
+
+                    <Text style={styles.NoAccountButton}>Forget Password?</Text>
+
+                    <TouchableOpacity
+                        onPress={forget_password}
+                    >
+                    <Text style={styles.NoAccountSignUpButton}>Change Password</Text>
+
+                    </ TouchableOpacity>
+
+                    <View style={styles.sign_up_button_border}>
+                        <TouchableOpacity 
+                            style = {styles.input}
+                            Emailverified
+                            onPress={LoginAuth} 
+                        >
+
+                        <Text style={styles.sign_up_button}>SIGN IN</Text>
+            
+                        </ TouchableOpacity>
+                    </View>
+
+                </View>
+
+                </ScrollView>
+
+      </ImageBackground>
+    </View>
   );
 };
-
-
-const styles = StyleSheet.create({
-
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: '#8fbc8f',
-        justifyContent: 'center',
-    },
-
-    input: {
-        fontSize: 25,
-        fontFamily: 'Noteworthy',
-        borderColor: 'black',
-        margin: 10,
-        borderWidth: 3,
-        padding: 10,
-        width:275,
-        borderRadius:10
-    },
-
-    inputTop: {
-        fontSize: 25,
-        fontFamily: 'Noteworthy',
-        borderColor: 'black',
-        margin: 10,
-        borderWidth: 3,
-        padding: 10,
-        width:275,
-        borderRadius:10
-    },
-
-    button: {
-        fontSize: 20,
-        fontFamily: 'Noteworthy',
-        margin: 25,
-    },
-  
-
-
-});
 
 export default LoginScreen;
