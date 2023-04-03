@@ -9,12 +9,15 @@ import { Camera, CameraType } from 'expo-camera';
 import NavBar from './navbar';
 import {addDoc, collection, doc, getDoc, getDocFromCache, getDocs, where, query, QuerySnapshot, updateDoc, setDoc, documentId, collectionGroup, DocumentReference, DocumentSnapshot, orderBy, arrayUnion, arrayRemove} from 'firebase/firestore';
 import { ref } from 'firebase/storage';
+import ButtonNavBar from '../compnents/ButtonNavBar';
+import PostCard from '../compnents/PostCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = ({navigation}) => {
   
   const [posts, setPosts] = useState([]);
   const refresh = () => window.location.reload()
-  const r_posts= query(collection(db,"posts"));
+  const r_posts= query (collectionGroup (db, 'posts'), orderBy('timestamp','desc'));
 
   const [liked, setliked] = useState(false)
   const [comment, setcomment] = useState([])
@@ -28,32 +31,32 @@ const HomeScreen = ({navigation}) => {
 
 
 
-  useEffect(()=> {
 
-    async function  fetchData(){
-  
-    const snapshot = await getDocs(r_posts) 
-  
-    const posts = []
-  
-    posts.forEach((doc) => {
-  
-      const {Email, image, post, Username, Share, Like, Comment} = doc.data()
-      
-      posts.push ({
-        id: doc.id,
-        Email,
-        image,
-        post,
-        Username,
-      })
+useEffect(()=> {
+
+  async function  fetchData(){
+
+  const snapshot = await getDocs(r_posts) 
+
+  const posts = []
+
+  posts.forEach((doc) => {
+    const {Email, image, post, Username} = doc.data()
+    
+    posts.push ({
+      id: doc.id,
+      Email,
+      image,
+      post,
+      Username,
     })
+  })
 
-    setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
-  }
-  fetchData()
+  setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+}
+fetchData()
 
-  },[]) 
+},[]) 
 
   //save likes in database
 
@@ -80,7 +83,15 @@ const HomeScreen = ({navigation}) => {
   return (
         
         <View  style  =  {styles.page}>
+          <SafeAreaView>
 
+        
+          <TouchableOpacity
+                 onPress={() =>navigation.navigate('Login')}
+             >
+             <Text>Sign Out</Text>
+ 
+           </ TouchableOpacity>
 <FlatList 
 data = {posts}
 
@@ -91,56 +102,22 @@ renderItem = {({item}) => (
 
   <View>
         <Text style = {styles.fontStyle}>
-
       
       {item.Email}
+
       {'\n'}
       {item.post}
       {'\n'}
 
       {item.image && <Image source={{uri:item.image}} style={{ width: 300, height: 900, textAlign: 'center' }} />}
-      {'\n'}
-      {'\n'}
+      {'\n\n\n\n\n\n\n'}
 
-      
+ 
+            <PostCard navigation={navigation}/>
 
-      <TouchableOpacity style={styles.button} onPress={() => setliked((isLiked)=> !isLiked)}>
-        <MaterialCommunityIcons
-          name={"thumb-up"}
-          size={32}
-          color = "green"
-          
-         /> 
-
-      </TouchableOpacity>
-      
-
-    
-      <Text>{'\t'}</Text>
-
-      <Pressable style={styles.button}>
-        <MaterialCommunityIcons
-          name={"comment-text"}
-          size={32}
-         /> 
-
-      </Pressable>
-
-      <Text>{'\t'}</Text>
-
-      <Pressable style={styles.button}>
-        <MaterialCommunityIcons
-          name={"share"}
-          size={32}
-         /> 
-
-             
-      </Pressable>
-
-
-   
+            {'\n'}   
       </Text>
-      
+
     
   </View>
  
@@ -149,67 +126,18 @@ renderItem = {({item}) => (
    )} 
 />  
 
+
+
             <View style = {styles.nav}>
 
+            <ButtonNavBar navigation={navigation}/>
 
-                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.home}>
-                      <MaterialCommunityIcons
-
-                        name={'home'}
-                        color = 'green'
-                        size={40}
-                       />        
-
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.navigation}>
-                      <MaterialCommunityIcons
-
-                        name={'bell-circle'}
-                        color = 'green'
-                        size={40}
-                       />        
-
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() =>navigation.navigate('AddPosts')} style = {styles.Post}>
-                      <MaterialCommunityIcons
-
-                        name={'post-outline'}
-                        color = 'green'
-                        size={40}
-                       />        
-
-                    </TouchableOpacity>
-
-                   
-                    <TouchableOpacity onPress={() =>navigation.navigate('Profile')} style = {styles.profile}>
-                      <MaterialCommunityIcons
-
-                        name={'face-man-profile'}
-                        color = 'green'
-                        size={40}
-                       />        
-
-                    </TouchableOpacity>
-
-                    
-                    <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.Search}>
-                      <MaterialCommunityIcons
-
-                        name={'account-search'}
-                        color = 'green'
-                        size={40}
-                       />        
-
-                    </TouchableOpacity>
-               
 
            
            
             </View>  
                        
-                    
+            </SafeAreaView>  
         </View>
         
   );
@@ -318,6 +246,7 @@ const styles = StyleSheet.create({
 });
 
 export  default HomeScreen;
+
 
 
 
