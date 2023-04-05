@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput } from 'react-native';
 import {auth, db, storage} from '../firebase';
 import { getAuth} from 'firebase/auth';
@@ -8,28 +8,36 @@ import { serverTimestamp } from 'firebase/firestore';
 import ButtonNavBar from '../compnents/ButtonNavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import { Camera } from 'expo-camera';
+import { uploadBytes, ref } from 'firebase/storage'; 
+
 
 
 const AddPosts = ({navigation}) => {
+
+  const auth = getAuth();
+  const db = getFirestore();
 
   const [Email, setEmail] = useState('');
   const [Username, setUsername] = useState('');
   const [image, setImage] = useState (null);
   const [post, setPost] = useState('');
-  const [liked, setLike] = useState([]);
-  const [Share, setShare] = useState ('');
-  const [comment, setComment] = useState([]);
+  
 
-  const auth = getAuth();
-  const db = getFirestore();
+  const [permission, setPermission] = useState(null);
 
+  useEffect(() => {
+    (async () => {
+      const perm_status = await ImagePicker.getCameraPermissionsAsync();
+      setPermission(perm_status == true);
+    }) ();
+  }, []);
 
 
   const pickImage = async () => {
 
-    let permission = ImagePicker.getCameraPermissionsAsync()
-  
-    let set_image = await ImagePicker.launchIm({
+    const set_image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
@@ -37,31 +45,54 @@ const AddPosts = ({navigation}) => {
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
     }
+
+    console.log(set_image.assets[0].uri)
   };
   
   
   const pickCamera = async () => {
     
-    let set_image = await ImagePicker.launchCameraAsync({
+    const set_image = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
-    }).then((image) => {
-      setImage(image.assets[0].uri)
     });
+    if (!set_image.canceled) {
+      setImage(set_image.assets[0].uri);
+    }
+    console.log(set_image.assets[0].uri)
   };
 
+  async function selectFile() {
 
+    try {
+      
+        const result = await DocumentPicker.getDocumentAsync({
+          type: 'image/*',
+        });
+      
+  
+        if (result.type === 'success') {
+          console.log('res : ' + JSON.stringify(result));
+        }
+      }
+     catch (err) {
+      console.warn(err);
+      return false;
+    }
+  }
 
   const create_post = async() => {
+    
     try {
-     addDoc(collection(db,"posts"),{
+     addDoc(collection(db,`users/${auth.currentUser?.email}/`,"posts"),{
         timestamp: serverTimestamp(),
         Email: auth.currentUser?.email,
         post: post,
         image: image,
         Username: Username,
       });
+    
     }
     catch (e) {
       console.error("Error adding document: ", e);
@@ -83,20 +114,36 @@ const AddPosts = ({navigation}) => {
         multiline={true}
         
       />
-    <TouchableOpacity
-        style = {styles.input}
-        onPress={create_post}
-        onPressOut={() =>navigation.navigate('Home')}
-    >
-    <Text style={styles.Text}>Create New Post</Text>
-
-    </ TouchableOpacity>
 
     <TouchableOpacity
         style = {styles.input}
         onPress={pickCamera}
     >
     <Text style={styles.Text}>Upload an image using the camera</Text>
+
+    </ TouchableOpacity>
+
+    <TouchableOpacity
+        style = {styles.input}
+        onPress={pickImage}
+    >
+    <Text style={styles.Text}>Upload an image using the camera roll</Text>
+
+    </ TouchableOpacity>
+
+    <TouchableOpacity
+        style = {styles.input}
+        onPress={selectFile}
+    >
+    <Text style={styles.Text}>Upload a document</Text>
+
+    </ TouchableOpacity>
+    <TouchableOpacity
+        style = {styles.input}
+        onPress={create_post}
+        onPressOut={() =>navigation.navigate('Home')}
+    >
+    <Text style={styles.Text}>Create New Post</Text>
 
     </ TouchableOpacity>
     </ScrollView>
@@ -140,4 +187,3 @@ const styles = StyleSheet.create({
   },
 
 })
-
