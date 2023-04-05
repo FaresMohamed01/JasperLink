@@ -16,11 +16,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const HomeScreen = ({navigation}) => {
   
   const [posts, setPosts] = useState([]);
+  const [comment, setcomment] = useState([]);
   const refresh = () => window.location.reload()
-  const r_posts= query (collectionGroup (db, 'posts'), orderBy('timestamp','desc'));
 
   const [liked, setliked] = useState(false)
-  const [comment, setcomment] = useState([])
   const [share, setshare] = useState([])
 
   const [type, setType] = useState(CameraType.back);
@@ -29,8 +28,8 @@ const HomeScreen = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(true);
   const [userData, setUserData] = useState([]);
 
-
-
+  const r_posts= query (collectionGroup (db, 'posts'), orderBy('timestamp','desc'));
+  const c_comments = query (collectionGroup (db, 'comments'));
 
 useEffect(()=> {
 
@@ -54,7 +53,28 @@ useEffect(()=> {
 
   setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
 }
+
+async function  fetchComments(){
+
+  const snapshot = await getDocs(c_comments) 
+
+  const comment = []
+
+  comment.forEach((doc) => {
+    const {Email, post, comment} = doc.data()
+    
+    comment.push ({
+      id: doc.id,
+      Email,
+      post: doc(collection(db,"posts"), where ("post", "==", post)),
+      comment,
+    })
+  })
+
+  setcomment(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+}
 fetchData()
+fetchComments()
 
 },[]) 
 
@@ -97,7 +117,6 @@ data = {posts}
 
 renderItem = {({item}) => (
   
-
 <Pressable>
 
   <View>
@@ -109,12 +128,33 @@ renderItem = {({item}) => (
       {item.post}
       {'\n'}
 
-      {item.image && <Image source={{uri:item.image}} style={{ width: 300, height: 900, textAlign: 'center' }} />}
-      {'\n\n\n\n\n\n\n'}
+      {'\n'} {item.image && <Image source={{uri:item.image}} style={styles.image} />}
 
- 
-            <PostCard navigation={navigation}/>
+      {'\n'} {'\n'} {'\n'} 
 
+          <PostCard navigation={navigation}/>
+
+        <FlatList
+
+        
+        data = {comment}
+
+        renderItem = {({item}) => (
+          
+        
+        <Pressable>
+        
+          <View>
+          <Text style = {styles.font}>
+        
+            {'\n'}{item.Email}: {item.comment}
+              </Text>
+            
+          </View>
+        </Pressable>
+
+        )}
+        />
             {'\n'}   
       </Text>
 
@@ -123,8 +163,10 @@ renderItem = {({item}) => (
  
 </Pressable>
 
-   )} 
-/>  
+   )}  
+        
+/>
+
 
 
 
@@ -154,7 +196,7 @@ const styles = StyleSheet.create({
     
       },
     fontStyle: {
-        borderWidth: 4,
+        borderWidth: 1,
         margin: 20,
         fontSize: 12,
         fontFamily: 'Noteworthy',
@@ -164,13 +206,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
 
       },
+
+      font:{
+
+        textAlign: 'left',
+        padding: 40,
+        alignSelf:'flex-start',
+        padding: 8,
+
+      },
       comment: {
         borderWidth: 1,
-        margin: 20,
         fontSize: 12,
         fontFamily: 'Noteworthy',
         borderColor: 'black',
-        textAlign: 'center',
+        textAlign: 'flex-right',
         justifyContent: 'center',
         alignItems: 'center',
 
@@ -239,6 +289,13 @@ const styles = StyleSheet.create({
 
       nav:{
         backgroundColor: `#ffebcd`
+      },
+      image:{
+        width: 350, 
+        height: 300,
+        display: 'flex',
+        justifyContent: 'center',
+        
       }
 
 
@@ -246,7 +303,5 @@ const styles = StyleSheet.create({
 });
 
 export  default HomeScreen;
-
-
 
 
