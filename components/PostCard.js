@@ -7,8 +7,9 @@ import { getAuth } from 'firebase/auth';
 import {app, db} from '../firebase';
 import { Icon } from 'react-native-elements';
 import AddPosts from '../screens/AddPosts';
+import Comments from '../screens/Comments';
 
-const PostCard = ({posts}) => {
+const PostCard = ({posts, navigation}) => {
 
     const auth = getAuth();
     const db = getFirestore();
@@ -65,13 +66,8 @@ const PostCard = ({posts}) => {
 
     }
 
-// Comments in a post
-
-
 
   return (
-
-
     
     <><Text>{' '}</Text><View>
           <TouchableOpacity style={styles.button} onPress={() => setLike((isLiked) => !isLiked)} onPressIn={liked_posts}>
@@ -81,12 +77,13 @@ const PostCard = ({posts}) => {
                   color={like ? "green" :"#800000"} />
           </TouchableOpacity>
       </View><Text>{'\t\t\t\t'}</Text><View>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={() => setComment((isLiked) => !isLiked)} onPressIn={() =>navigation.navigate('comments')}>
                   <Icon
                       name={"comment"}
                       size={32}
-                      color = {"green"}
-                />
+                      color={comment ? "green" :"#800000"} />
+              
+                
               </TouchableOpacity>
           </View><Text>{'\t\t\t\t'}</Text><View>
               <TouchableOpacity style={styles.button}>
