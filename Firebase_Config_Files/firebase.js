@@ -1,8 +1,10 @@
-import { getApp, initializeApp } from "firebase/app";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage'
+import { initializeApp } from "firebase/app";
+
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import {getFirestore} from "firebase/firestore";
-import {getStorage, ref} from "firebase/storage";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -10,7 +12,7 @@ import {getStorage, ref} from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDCbcCcXLlOMN7MnO1tEirVh79QKOdmvMM",
   authDomain: "capstoneproject-7ce43.firebaseapp.com",
   projectId: "capstoneproject-7ce43",
@@ -22,10 +24,14 @@ const firebaseConfig = {
   
 };
 
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig)
+}
+
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp (firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-export {auth, app, db, storage};
+export { app, firebase, auth, db}
