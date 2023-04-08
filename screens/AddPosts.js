@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput } from 'react-native';
-import {auth, db, storage} from '../firebase';
+import {ActivityIndicator, Image, Button, ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput, Document } from 'react-native';
+import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
 import {addDoc, collection, getFirestore} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
@@ -9,10 +9,6 @@ import ButtonNavBar from '../compnents/ButtonNavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Camera } from 'expo-camera';
-import { uploadBytes, ref } from 'firebase/storage'; 
-
-
 
 const AddPosts = ({navigation}) => {
 
@@ -21,7 +17,9 @@ const AddPosts = ({navigation}) => {
 
   const [Email, setEmail] = useState('');
   const [Username, setUsername] = useState('');
-  const [image, setImage] = useState (null);
+  const [image, setImage] = useState(null)
+  const [doc, setDoc] = useState([])
+  const [uploading, setUploading] = useState(false)
   const [post, setPost] = useState('');
   
 
@@ -52,7 +50,7 @@ const AddPosts = ({navigation}) => {
   
   const pickCamera = async () => {
     
-    const set_image = await ImagePicker.launchCameraAsync({
+  const set_image = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
@@ -63,23 +61,14 @@ const AddPosts = ({navigation}) => {
     console.log(set_image.assets[0].uri)
   };
 
-  async function selectFile() {
+  const pickdocument = async() => {
 
-    try {
-      
-        const result = await DocumentPicker.getDocumentAsync({
-          type: 'image/*',
-        });
-      
-  
-        if (result.type === 'success') {
-          console.log('res : ' + JSON.stringify(result));
-        }
-      }
-     catch (err) {
-      console.warn(err);
-      return false;
-    }
+    const set_doc = await DocumentPicker.getDocumentAsync({
+    });
+      setDoc(set_doc);
+    
+    console.log(set_doc.uri);
+    
   }
 
   const create_post = async() => {
@@ -99,7 +88,44 @@ const AddPosts = ({navigation}) => {
     }
   };
 
-  
+  const uploadImage = async () => {
+
+    // Make a HTTP request to the file 
+    const blob = await new Promise((resolve) => {
+      const imagerequest = new XMLHttpRequest();
+      imagerequest.onload = function() {
+        resolve(imagerequest.response);
+      };
+      imagerequest.responseType = 'blob';
+      imagerequest.open('GET', image, true);
+      imagerequest.send(null);
+    })
+
+    // create firebase storage called 'Posts' and adds file to it
+    const ref = firebase.storage().ref().child('Posts/Images')
+    const snapshot = ref.put(blob)
+
+    //Checks out errors and uploading state while uploading the image
+    snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      ()=>{
+        setUploading(true)
+      },
+      (error) => {
+        setUploading(false)
+        blob.close()
+        return 
+      },
+      () => {
+        snapshot.snapshot.ref.getDownloadURL().then((url) => {
+          setUploading(false)
+          setImage(url)
+          blob.close()
+          return url
+        })
+      }
+      )
+  }
+
 
   return (
     <View style = {styles.page} >
@@ -119,7 +145,7 @@ const AddPosts = ({navigation}) => {
         style = {styles.input}
         onPress={pickCamera}
     >
-    <Text style={styles.Text}>Upload an image using the camera</Text>
+    <Text style={styles.Text}>Select an image using the camera</Text>
 
     </ TouchableOpacity>
 
@@ -127,17 +153,22 @@ const AddPosts = ({navigation}) => {
         style = {styles.input}
         onPress={pickImage}
     >
-    <Text style={styles.Text}>Upload an image using the camera roll</Text>
+    <Text style={styles.Text}>Select an image using the camera roll</Text>
 
     </ TouchableOpacity>
 
     <TouchableOpacity
         style = {styles.input}
-        onPress={selectFile}
+        onPress={pickdocument}
     >
-    <Text style={styles.Text}>Upload a document</Text>
+    <Text style={styles.Text}>Select a document</Text>
+    
 
     </ TouchableOpacity>
+
+   { !uploading ? <Button onPress={uploadImage} title='Upload' /> :  <ActivityIndicator size={'small'} color='green' /> }
+
+
     <TouchableOpacity
         style = {styles.input}
         onPress={create_post}
@@ -148,8 +179,9 @@ const AddPosts = ({navigation}) => {
     </ TouchableOpacity>
     </ScrollView>
     
-    <ButtonNavBar navigation={navigation}/>
+   
     </SafeAreaView>
+    <ButtonNavBar navigation={navigation}/>
     </View>
     
   );
