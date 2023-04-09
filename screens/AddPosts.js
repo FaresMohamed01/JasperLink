@@ -102,7 +102,7 @@ const AddPosts = ({navigation}) => {
     })
 
     // create firebase storage called 'Posts' and adds file to it
-    const ref = firebase.storage().ref().child('Posts/Images')
+    const ref = firebase.storage().ref().child(`/images/${post}`)
     const snapshot = ref.put(blob)
 
     //Checks out errors and uploading state while uploading the image
