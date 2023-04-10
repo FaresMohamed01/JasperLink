@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {Button,ScrollView, Text, View, Image, TouchableOpacity, TextInput, ImageBackground} from 'react-native';
 import {app, db} from '../firebase';
 import {getAuth,createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithPopup, FacebookAuthProvider, signInWithRedirect, signInWithEmailLink} from 'firebase/auth';
-import {addDoc, collection} from 'firebase/firestore';
+import {addDoc, collection, doc, setDoc} from 'firebase/firestore';
 import { styles } from './Style';
 import { GoogleAuthProvider } from 'firebase/auth';
 
@@ -18,6 +18,7 @@ const SignUpScreen = ({navigation}) => {
   const [information, setInformation] = useState(null);
   const [Username, setUsername] = useState(null);
   const [Password, setPassword] = useState(null);
+  const [profilepic, setProfilepic] = useState(null)
   
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
@@ -35,9 +36,10 @@ const SignUpScreen = ({navigation}) => {
     await createUserWithEmailAndPassword(auth, Email, Password)
 
     try{
-      addDoc(collection(db,`users`),{
+      setDoc(doc(db,`users`,`${auth.currentUser?.email}`),{
           
           Email: auth.currentUser?.email,
+          profilepic: profilepic,
           first: first,
           last: last,
           school: school,
