@@ -1,63 +1,33 @@
 import React from 'react';
-import { useContext, useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import {FlatList, ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput, Pressable } from 'react-native';
-import { useFonts } from 'expo-font';
+import { useState } from 'react';
+import {ScrollView, StyleSheet, Text, Button, View, TouchableOpacity, TextInput } from 'react-native';
 import {auth, db} from '../firebase';
-import { getAuth,createUserWithEmailAndPassword,sendEmailVerification, updateProfile, updateCurrentUser } from 'firebase/auth';
-import LoginScreen from './LoginScreen';
-import HomeScreen from './HomeScreen';
-import {addDoc, collection, doc, getDoc, getDocFromCache, getDocs, where, query, QuerySnapshot, updateDoc} from 'firebase/firestore';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { async } from '@firebase/util';
+import {collection, doc, where, query, updateDoc} from 'firebase/firestore';
 
-const Profile = ({navigation}) => {
+
+const Profile = ({navigation, userd}) => {
 
   const [Email, setEmail] = useState(null);
-  const [Username, setUsername] = useState(null);
-  const [first, setFirst] = useState(null);
-  const [last, setLast] = useState(null);
-  const [school, setSchool] = useState(null);
-  const [major, setMajor] = useState(null);
-  const [GPA, setGPA] = useState(null);
+  const [Username, setUsername] = useState(Username);
+  const [first, setFirst] = useState(first);
+  const [last, setLast] = useState(last);
+  const [school, setSchool] = useState(school);
+  const [major, setMajor] = useState(major);
+  const [GPA, setGPA] = useState(GPA);
   const [information, setInformation] = useState(null);
 
 
   const [users, setUsers] = useState([]);
   const user = query(collection(db,"users"),  where ("Email","==", auth.currentUser?.email));
 
-useEffect(async()=> {
 
-    
-    const get_user = await getDocs(user) 
-
-    const users = []
-
-    get_user.forEach((doc) => {
-
-      const { Email, Password, Username } = doc.data()
-
-      users.push ({
-        id: doc.id,
-        Email,
-        Password,
-        Username,
-      })
-
-    })
-
-    setUsers(users)
-
-  },[])
 
     //creates a user in firebase
-    const ProfileFirestore = async ({navigation}) => {
+    const ProfileFirestore = async ({navigation,users}) => {
       try {
   
-        addDoc(collection(db,"users"),{
-          
+        updateDoc(doc(db,`users/${auth.currentUser?.email}`),{
           Email: auth.currentUser?.email,
-          Username: Username,
           first: first,
           last: last,
           school: school,
@@ -67,57 +37,33 @@ useEffect(async()=> {
     
         });
   
-        setEmail('');
-        setUsername('');
-        setFirst('');
-        setLast('');
-        setSchool('');
-        setMajor('');
-        setGPA('');
-        setInformation('');
-  
-    
+        setUsers(users)
       }
       
         catch (e) {
-          console.error("Error adding document: ", e);
+          alert("Information Missing!");
         }
+    }
+
+    
      
-      }
+      
 
   return (
-    <View>
+    <View style = {styles.page}>
+      <Text style = {styles.title}> Edit Profile </Text>
+      <ScrollView>
 
-      <Text>{auth.currentUser?.email}</Text>    
-
-      <FlatList
-        data = {users}
-        renderItem = {({item}) => (
-
-          <Pressable
-          >
-            <View>
-
-              <Text>{item.Username}</Text>
-
-              
-            </View>
-           
-          </Pressable>
-
-        )}
-      />  
-
-        <TextInput
+       <TextInput style = {styles.textinput}
           value = {first}
-          onChangeText={first => setFirst("Text")}
+          onChangeText={first => setFirst(first)}
           autoCapitalize="none"
           placeholder = "First Name"
           autoCorrect={false}
           
         />
 
-        <TextInput
+        <TextInput style = {styles.textinput}
           value = {last}
           onChangeText={last => setLast(last)}
           autoCapitalize="none"
@@ -125,7 +71,7 @@ useEffect(async()=> {
           autoCorrect={false}
         />
 
-        <TextInput
+        <TextInput style = {styles.textinput}
           value = {school}
           onChangeText={school => setSchool(school)}
           autoCapitalize="none"
@@ -133,7 +79,7 @@ useEffect(async()=> {
           autoCorrect={false}
         />
 
-        <TextInput
+        <TextInput style = {styles.textinput}
           value = {major}
           onChangeText={major => setMajor(major)}
           autoCapitalize="none"
@@ -141,7 +87,7 @@ useEffect(async()=> {
           autoCorrect={false}
         />
 
-        <TextInput
+        <TextInput style = {styles.textinput}
           value = {GPA}
           onChangeText={GPA => setGPA(GPA)}
           autoCapitalize="none"
@@ -149,39 +95,78 @@ useEffect(async()=> {
           autoCorrect={false}
         />
 
-        <TextInput
+        <TextInput style = {styles.text}
           value = {information}
           onChangeText={information => setInformation(information)}
           autoCapitalize="none"
           placeholder = "Additional Research, Notes, and etc..."
           autoCorrect={false}
         />
-
-
-        <TextInput
-          value = {Username}
-          onChangeText={Username=> setUsername(Username)}
-          autoCapitalize="none"
-          placeholder = "Create Your Username"
-          autoCorrect={false}
-        />
-
+        
 
         <Button
-
           title = "Save Information"
           onPress={ProfileFirestore}
-          
-          
-          
         />
+        </ScrollView>
+              
     </View>
+    
+    
   )
 }
+
 
   
 
   
 export default Profile
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+
+  page:{
+    flex: 1,
+    backgroundColor: "#90ee90",
+    justifyContent:  "center",
+    textAlign: "center"
+
+  },
+
+  title:{
+
+    fontSize: 25,
+    fontFamily: 'Noteworthy',
+    borderColor: 'black',
+    textAlign: 'flex-start'
+  },
+
+  text:{
+
+      margin: 10,
+      borderWidth: 1,
+      padding: 50,
+      width:300,
+      borderRadius:10,
+      fontSize: 25,
+      fontFamily: 'Noteworthy',
+      borderColor: 'black',
+      textAlign: 'center'
+    },
+
+    textinput:{
+
+      margin: 10,
+      borderWidth: 1,
+      padding: 20,
+      width:300,
+      borderRadius:10,
+      fontSize: 20,
+      fontFamily: 'Noteworthy',
+      borderColor: 'black',
+      textAlign: 'center'
+    },
+
+
+
+
+})
