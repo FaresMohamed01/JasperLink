@@ -5,7 +5,7 @@ import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
 import {addDoc, collection, getFirestore} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
-import ButtonNavBar from '../compnents/ButtonNavBar';
+import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -37,8 +37,8 @@ const AddPosts = ({navigation}) => {
 
     const set_image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
       quality: 1,
+      allowsMultipleSelection: true
     });
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
@@ -61,20 +61,10 @@ const AddPosts = ({navigation}) => {
     console.log(set_image.assets[0].uri)
   };
 
-  const pickdocument = async() => {
-
-    const set_doc = await DocumentPicker.getDocumentAsync({
-    });
-      setDoc(set_doc);
-    
-    console.log(set_doc.uri);
-    
-  }
-
   const create_post = async() => {
     
     try {
-     addDoc(collection(db,`users/${auth.currentUser?.email}/`,"posts"),{
+     addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
         timestamp: serverTimestamp(),
         Email: auth.currentUser?.email,
         post: post,
@@ -96,6 +86,7 @@ const AddPosts = ({navigation}) => {
       imagerequest.onload = function() {
         resolve(imagerequest.response);
       };
+
       imagerequest.responseType = 'blob';
       imagerequest.open('GET', image, true);
       imagerequest.send(null);
@@ -157,21 +148,11 @@ const AddPosts = ({navigation}) => {
 
     </ TouchableOpacity>
 
-    <TouchableOpacity
-        style = {styles.input}
-        onPress={pickdocument}
-    >
-    <Text style={styles.Text}>Select a document</Text>
-    
-
-    </ TouchableOpacity>
-
-   { !uploading ? <Button onPress={uploadImage} title='Upload' /> :  <ActivityIndicator size={'small'} color='green' /> }
-
 
     <TouchableOpacity
         style = {styles.input}
-        onPress={create_post}
+        onPressIn={uploadImage}
+        onPress = {create_post}
         onPressOut={() =>navigation.navigate('Home')}
     >
     <Text style={styles.Text}>Create New Post</Text>
