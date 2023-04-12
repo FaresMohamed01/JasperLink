@@ -147,6 +147,20 @@ const AddPosts = ({navigation}) => {
     <Text style={styles.Text}>Select an image using the camera roll</Text>
 
     </ TouchableOpacity>
+    
+     <TouchableOpacity onPress={uploadImage}>
+      <View style={styles.upload_border}>
+
+        <Image style={styles.camera_roll_icon}
+         source={require('../assets/Upload.png')}>
+        </Image>
+        <Text style = {styles.update_roll_text}>
+          Upload Image
+        {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
+        </Text>
+
+      </View>
+    </ TouchableOpacity>
 
 
     <TouchableOpacity
