@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import {ActivityIndicator, Image, Button, ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput, Document } from 'react-native';
+import {ActivityIndicator, Image, Button, ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput, Document, FlatList } from 'react-native';
 import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
 import {addDoc, collection, getFirestore} from 'firebase/firestore';
@@ -9,6 +9,10 @@ import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
+import TopBanner from '../modules/TopBanner';
+
+import { styles } from './Style';
+
 
 const AddPosts = ({navigation}) => {
 
@@ -18,11 +22,9 @@ const AddPosts = ({navigation}) => {
   const [Email, setEmail] = useState('');
   const [Username, setUsername] = useState('');
   const [image, setImage] = useState(null)
-  const [doc, setDoc] = useState([])
   const [uploading, setUploading] = useState(false)
   const [post, setPost] = useState('');
   
-
   const [permission, setPermission] = useState(null);
 
   useEffect(() => {
@@ -81,10 +83,13 @@ const AddPosts = ({navigation}) => {
   const uploadImage = async () => {
 
     // Make a HTTP request to the file 
-    const blob = await new Promise((resolve) => {
+    const blob = await new Promise((resolve, reject) => {
       const imagerequest = new XMLHttpRequest();
       imagerequest.onload = function() {
         resolve(imagerequest.response);
+      };
+      imagerequest.onerror = function() {
+        reject(new TypeError('Network request failed'));
       };
 
       imagerequest.responseType = 'blob';
@@ -118,37 +123,67 @@ const AddPosts = ({navigation}) => {
   }
 
 
+
+
   return (
     <View style = {styles.page} >
+
       <SafeAreaView>
+
+      
+      <TopBanner navigation={navigation}/>
+      </SafeAreaView>
+        
+  
+      <Image style={styles.profile_icon}
+       source={require('../assets/email_image.png')}>
+      </Image>
+
+      <SafeAreaView style = {styles.flatlist}> 
       <ScrollView>
       <TextInput style = {styles.post}
       
         value = {post}
         onChangeText={Post => setPost(Post)}
-        placeholder = "Add new Post"
+        placeholder = "What is on your mind?"
         numberOfLines={50}
         multiline={true}
         
       />
+ <Text>
+    {'\n'} {'\n'}
+    </Text>
 
-    <TouchableOpacity
-        style = {styles.input}
-        onPress={pickCamera}
-    >
-    <Text style={styles.Text}>Select an image using the camera</Text>
-
-    </ TouchableOpacity>
-
-    <TouchableOpacity
-        style = {styles.input}
-        onPress={pickImage}
-    >
-    <Text style={styles.Text}>Select an image using the camera roll</Text>
-
-    </ TouchableOpacity>
     
-     <TouchableOpacity onPress={uploadImage}>
+    <TouchableOpacity onPress={pickCamera}>
+      <View style={styles.camera_border}>
+        
+          <Image style={styles.camera_icon}
+           source={require('../assets/camera_icon.png')}>
+          </Image>
+          <Text style = {styles.camera_text}>
+            Camera
+          </Text>
+
+      </View>
+
+    </TouchableOpacity>
+    
+   
+    <TouchableOpacity onPress={pickImage}>
+      <View style={styles.camera_roll_border}>
+
+        <Image style={styles.camera_roll_icon}
+         source={require('../assets/camera_roll_icon.png')}>
+        </Image>
+        <Text style = {styles.camera_roll_text}>
+            Camera Roll
+        </Text>
+
+      </View>
+    </ TouchableOpacity>
+
+    <TouchableOpacity onPress={uploadImage}>
       <View style={styles.upload_border}>
 
         <Image style={styles.camera_roll_icon}
@@ -161,22 +196,30 @@ const AddPosts = ({navigation}) => {
 
       </View>
     </ TouchableOpacity>
+  
+  
 
-
-    <TouchableOpacity
+       <TouchableOpacity
         style = {styles.input}
-        onPressIn={uploadImage}
-        onPress = {create_post}
+        onPress={create_post}
         onPressOut={() =>navigation.navigate('Home')}
     >
-    <Text style={styles.Text}>Create New Post</Text>
+    <Text style={styles.create_post}>Create New Post</Text>
+
 
     </ TouchableOpacity>
+
     </ScrollView>
     
    
+    <View style = {styles.navs}>
+
+<ButtonNavBar navigation={navigation}/>
+
+</View>  
+
     </SafeAreaView>
-    <ButtonNavBar navigation={navigation}/>
+   
     </View>
     
   );
@@ -184,33 +227,3 @@ const AddPosts = ({navigation}) => {
 
 
 export default AddPosts
-
-const styles = StyleSheet.create({
-
-  page:  {
-
-    flex: 1,
-    backgroundColor: '#8fbc8f',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  post: {
-    margin: 10,
-    borderWidth: 3,
-    padding: 50,
-    width:300,
-    borderRadius:10,
-    fontSize: 25,
-    fontFamily: 'Noteworthy',
-    borderColor: 'black',
-    textAlign: 'center'
-  },
-
-  Text:{
-    fontSize: 20,
-    fontFamily: 'Noteworthy',
-    margin: 25,
-  },
-
-})
