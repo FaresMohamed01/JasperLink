@@ -21,34 +21,35 @@ const SignUpScreen = ({navigation}) => {
   const [profilepic, setProfilepic] = useState(null)
   
   const auth = getAuth();
-  const provider = new GoogleAuthProvider();
- 
 
-  const actionCodeSettings = {
-    url: 'https://capstoneproject-7ce43.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
-    handleCodeInApp: true,
-    dynamicLinkDomain: 'capproject.page.link'
-  };
+  function validation (Email){
+    return Email.split('@')[1] == 'manhattan.edu';
+  }
+  
+
   //creates a user in firebase
   const SignUp = async ({navigation}) => {
 
+   try {
 
-    await createUserWithEmailAndPassword(auth, Email, Password)
+    valid_email = validation(Email)
 
-    try{
+    if (valid_email == true){
+     await createUserWithEmailAndPassword(auth, Email, Password)
+
       setDoc(doc(db,`users`,`${auth.currentUser?.email}`),{
           
-          Email: auth.currentUser?.email,
-          profilepic: profilepic,
-          first: first,
-          last: last,
-          school: school,
-          major:  major,
-          GPA: GPA,
-          information: information,
-          Username: Username,
-          Password: Password
-        });
+        Email: auth.currentUser?.email,
+        profilepic: profilepic,
+        first: first,
+        last: last,
+        school: school,
+        major:  major,
+        GPA: GPA,
+        information: information,
+        Username: Username,
+        Password: Password
+      });
 
         setEmail('');
         setFirst('');
@@ -58,18 +59,18 @@ const SignUpScreen = ({navigation}) => {
         setGPA('');
         setInformation('');
         setUsername('');
-        setPassword('');
+       setPassword('');
 
         alert("Account Created!")
-        
-      
-        }
-        catch(error){
-          alert("Enter a valid email")
-        }
-         
-          
-
+      }
+      else if (valid_email != true) {
+        alert ("Please use a Manhattan College email")
+      }
+   }
+    catch(error){
+      alert ("Error! Check your account or password")
+    }
+    
 
   }
 
@@ -180,13 +181,6 @@ const SignUpScreen = ({navigation}) => {
     )
 }
     
-  
-      
-   
-   
-  
-
- 
 
 
 export default SignUpScreen;
