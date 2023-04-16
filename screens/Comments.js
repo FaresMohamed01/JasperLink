@@ -1,7 +1,8 @@
 import { StyleSheet, TextInput, View, Text, TouchableOpacity } from 'react-native'
 import React, {useState} from 'react'
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
+import PostCard from '../modules/Posts';
 
 const Comments = ({navigation}) => {
 
@@ -12,7 +13,7 @@ const Comments = ({navigation}) => {
   const savecomments = () => {
 
     try {
-        addDoc (collection (db,`users/${auth.currentUser?.email}/`,"comments"), {
+        addDoc (collection (db,"comments"), {
             Email: auth.currentUser?.email,
             post: post,
             comment: comment,
