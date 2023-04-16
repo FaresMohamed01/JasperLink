@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import {ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import {auth} from '../firebase';
-import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
+import { getAuth,signInWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { styles } from './Style';
 
 
@@ -36,7 +36,7 @@ const LoginScreen = ({navigation}) => {
      //creates a user in firebase
      const LoginAuth = ({navigation}) => {
         signInWithEmailAndPassword(auth, Email,Password)
-        .catch(error => alert(error.message))
+        .catch(error => alert("User Not Found!"))
 
      }
 
