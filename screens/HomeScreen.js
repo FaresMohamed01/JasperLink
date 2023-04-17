@@ -1,13 +1,14 @@
 //Home Screen Page
 import React, { useState, useEffect }  from 'react';
 import {Pressable, FlatList, Text, View, Image, ActivityIndicator, RefreshControl} from 'react-native';
-import {db} from '../firebase';
+import {db, auth} from '../firebase';
 import {collection, getDocs, where, query, collectionGroup, orderBy} from 'firebase/firestore';
 import ButtonNavBar from '../modules/NavBar';
 import TopBanner from '../modules/TopBanner';
-import PostCard from '../modules/Posts';
+import PostCard from '../modules/PostCard';
+import TopHeaderBar from '../modules/TopHeaderBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './Style';
+import { styles } from '../Style';
 
 const HomeScreen = ({navigation, user}) => {
 
@@ -15,17 +16,11 @@ const HomeScreen = ({navigation, user}) => {
   const [posts, setPosts] = useState([]);
   const posts_query = query (collectionGroup (db, 'posts'), orderBy('timestamp','desc'));
 
-  //Comments Array and Comment query 
-  const [comment, setcomment] = useState([]);
-  const comments_query = query (collectionGroup (db, 'comments'));
-
   //Refresh the page
   const [refresh, setRefresh] = useState(true);
 
-
   useEffect(()=> {
     fetchData()
-    fetchComments()
   },[]) 
 
   const fetchData = async() => {
@@ -50,30 +45,18 @@ const HomeScreen = ({navigation, user}) => {
         setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
   }
 
-  const fetchComments = async () => {
-    const comment = []
-    const snapshot = await getDocs(comments_query) 
-
-    comment.forEach((doc) => {
-      const {Email, post, comment} = doc.data()
-  
-      comment.push ({
-        id: doc.id,
-        Email,
-        post: doc(collection(db,"posts"), where ("post", "==", post)),
-        comment,
-     })
-    })
-
-      setcomment(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
-
-  }
 
   return (
     <View  style = {styles.page}>
-       {refresh ? <ActivityIndicator/> : null}
-      <SafeAreaView style = {styles.flatlist}>
+      <View>
+        <TopHeaderBar navigation={navigation}/>
+      </View>
+
       <TopBanner/>
+
+       {refresh ? <ActivityIndicator/> : null}
+
+      <SafeAreaView style = {styles.flatlist}>
       <FlatList 
         data = {posts}
         renderItem = {({item}) => (
@@ -100,23 +83,8 @@ const HomeScreen = ({navigation, user}) => {
             </View>
 
             <PostCard navigation={navigation} />
-      
-            <FlatList 
-              data = {comment}  
-              renderItem = {({item}) => (
-                 <Pressable>
-                  <View>
-                    <Text style = {styles.font}>
-                      {'\n'}{item.Email}: {item.comment}
-                    </Text>
-            
-                  </View>
-                </Pressable>
 
-               )}
-               
-             />
-       
+          
         
         {'\n'}<View>
                 <Text style = {styles.abstract}>Abstract: </Text>
