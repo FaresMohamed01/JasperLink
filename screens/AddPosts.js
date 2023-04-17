@@ -3,15 +3,16 @@ import {useState, useEffect} from 'react';
 import {ActivityIndicator, Image, Button, ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput, Document, FlatList } from 'react-native';
 import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
-import {addDoc, collection, getFirestore} from 'firebase/firestore';
+import {addDoc, collection, setDoc, getFirestore, doc, where} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
 import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import TopBanner from '../modules/TopBanner';
+import TopHeaderBar from '../modules/TopHeaderBar';
 
-import { styles } from './Style';
+import { styles } from '../Style';
 
 
 const AddPosts = ({navigation}) => {
@@ -63,10 +64,18 @@ const AddPosts = ({navigation}) => {
     console.log(set_image.assets[0].uri)
   };
 
+  const pickDoc = async () => {
+    const set_image = await DocumentPicker.getDocumentAsync({});
+    if (!set_image.canceled) {
+      setImage(set_image.uri);
+    }
+    console.log(set_image.uri)
+  }
+
   const create_post = async() => {
     
     try {
-     addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
+      addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
         timestamp: serverTimestamp(),
         Email: auth.currentUser?.email,
         post: post,
@@ -131,7 +140,11 @@ const AddPosts = ({navigation}) => {
       <SafeAreaView>
 
       
-      <TopBanner navigation={navigation}/>
+      <View>
+        <TopHeaderBar navigation={navigation}/>
+      </View>
+
+      <TopBanner/>
       </SafeAreaView>
         
   
@@ -183,14 +196,28 @@ const AddPosts = ({navigation}) => {
       </View>
     </ TouchableOpacity>
 
-    <TouchableOpacity onPress={uploadImage}>
-      <View style={styles.upload_border}>
+    <TouchableOpacity onPress={pickDoc}>
+      <View style={styles.camera_border}>
+        
+          <Image style={styles.camera_icon}
+           source={require('../assets/doc.jpg')}>
+          </Image>
+          <Text style = {styles.camera_text}>
+            Document
+          </Text>
 
-        <Image style={styles.camera_roll_icon}
+      </View>
+
+    </TouchableOpacity>
+
+    <TouchableOpacity onPress={uploadImage}>
+      <View style={styles.camera_roll_border}>
+
+        <Image style={styles.upload_image_icon}
          source={require('../assets/Upload.png')}>
         </Image>
-        <Text style = {styles.update_roll_text}>
-          Upload Image
+        <Text style = {styles.upload_image_text}>
+          Upload
         {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
         </Text>
 
