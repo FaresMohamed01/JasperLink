@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {Button,ScrollView, Text, View, Image, TouchableOpacity, TextInput, ImageBackground} from 'react-native';
-import {app, db} from '../firebase';
+import {app, db, database, firebase} from '../firebase';
 import {getAuth,createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithPopup, FacebookAuthProvider, signInWithRedirect, signInWithEmailLink} from 'firebase/auth';
 import {addDoc, collection, doc, setDoc} from 'firebase/firestore';
-import { styles } from './Style';
-import { GoogleAuthProvider } from 'firebase/auth';
+import { styles } from '../Style';
+import { getDatabase, set, ref, push} from 'firebase/database';
 
 
 const SignUpScreen = ({navigation}) => {
@@ -26,7 +26,6 @@ const SignUpScreen = ({navigation}) => {
     return Email.split('@')[1] == 'manhattan.edu';
   }
   
-
   //creates a user in firebase
   const SignUp = async ({navigation}) => {
 
@@ -37,19 +36,20 @@ const SignUpScreen = ({navigation}) => {
     if (valid_email == true){
      await createUserWithEmailAndPassword(auth, Email, Password)
 
-      setDoc(doc(db,`users`,`${auth.currentUser?.email}`),{
+     setDoc(doc(db,`users`,`${Username}`),{
           
-        Email: auth.currentUser?.email,
-        profilepic: profilepic,
-        first: first,
-        last: last,
-        school: school,
-        major:  major,
-        GPA: GPA,
-        information: information,
-        Username: Username,
-        Password: Password
-      });
+      Email: auth.currentUser?.email,
+      profilepic: profilepic,
+      first: first,
+      last: last,
+      school: school,
+      major:  major,
+      GPA: GPA,
+      information: information,
+      Username: Username,
+      Password: Password
+    });
+    
 
         setEmail('');
         setFirst('');
@@ -59,7 +59,7 @@ const SignUpScreen = ({navigation}) => {
         setGPA('');
         setInformation('');
         setUsername('');
-       setPassword('');
+        setPassword('');
 
         alert("Account Created!")
       }
