@@ -1,81 +1,81 @@
-import { StyleSheet, TextInput, View, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
 import React, {useState} from 'react'
 import { addDoc, collection, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import PostCard from '../modules/Posts';
+import { styles } from '../Style';
+import ButtonNavBar from '../modules/NavBar';
+import TopBanner from '../modules/TopBanner';
+import TopHeaderBar from '../modules/TopHeaderBar';
 
 const Comments = ({navigation}) => {
 
   const [Email, setEmail] = useState ('');
-  const [post, setPost] = useState('');
-  const [comment, setComment] = useState('');
+  const [post, setPost] = useState(post);
+  const [comment, setComment] = useState(comment);
 
   const savecomments = () => {
 
     try {
-        addDoc (collection (db,"comments"), {
+        addDoc (collection (db,`comments/${auth.currentUser?.email}/`,"comments"), {
             Email: auth.currentUser?.email,
             post: post,
             comment: comment,
         })
 
+        alert("Success! Comment is added");
+
     }
-    catch(error){
-        console.log(error)
+    catch (e) {
+      alert("Information Missing! Comment is not added");
     }
+    
 
 
   }  
   return (
-    <View style = {styles.page}>
+    <SafeAreaView style = {styles.page}>
+<SafeAreaView>
 
-      <TextInput style = {styles.post}
-       onChangeText={post => setPost(post)}
+      
+<View>
+  <TopHeaderBar navigation={navigation}/>
+</View>
+
+
+</SafeAreaView>
+      
+      <ScrollView>
+     
+      <TextInput style = {styles.post} keyboardType='decimal-pad'
+        onChangeText={post => setPost(post)}
         placeholder = "Enter the post title"
+        multiline={true}
       />
-       <Text>{'\n\n\n\n\n\n\n'}</Text>
       <TextInput style = {styles.post}
-      onChangeText={comment => setComment(comment)}
+        onChangeText={comment => setComment(comment)}
         placeholder = "Enter Your Comment"
+        numberOfLines={50}
+        multiline={true}
       />
 
-       <TouchableOpacity
+      
+<TouchableOpacity
+        style = {styles.input}
         onPress={savecomments}
-        onPressOut ={() =>navigation.navigate('Home')}
-    >
-        <Text >Post The Comment</Text>
+        
+        onPressIn={() =>navigation.navigate('UserComments')}
 
-    </ TouchableOpacity>
-    </View>
+    >
+    <Text style={styles.create_post}>Add New Comment</Text>
+  </TouchableOpacity>
+    </ScrollView>
+    <View style = {styles.nav}>
+        <ButtonNavBar />
+      </View>  
+    </SafeAreaView>
+    
+   
   )
 }
 
 export default Comments
-
-const styles = StyleSheet.create({
-    page:  {
-
-        flex: 1,
-        backgroundColor: '#8fbc8f',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-    
-      post: {
-        margin: 5,
-        borderWidth: 3,
-        padding: 10,
-        width:300,
-        borderRadius:10,
-        fontSize: 25,
-        fontFamily: 'Noteworthy',
-        borderColor: 'black',
-        textAlign: 'center'
-      },
-    
-      Text:{
-        fontSize: 20,
-        fontFamily: 'Noteworthy',
-        margin: 25,
-      },
-})
