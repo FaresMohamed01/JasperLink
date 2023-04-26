@@ -77,7 +77,7 @@ const HomeScreen = ({navigation, user}) => {
 
       <View>   
         <Text>
-      {'\n\n'}<WebView source={{uri:item.image}} style = {styles.image} />
+      {'\n\n'}<Image source={{uri:item.image}} style = {styles.image} />
     
       
       </Text> 
