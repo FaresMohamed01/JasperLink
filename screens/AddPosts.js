@@ -1,33 +1,90 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
-import {ActivityIndicator, Image, Button, ScrollView, StyleSheet, Text, View, TouchableOpacity,TextInput, Document, FlatList } from 'react-native';
+import {useState, useEffect, useRef} from 'react';
+import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput } from 'react-native';
 import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
-import {addDoc, collection, setDoc, getFirestore, doc, where} from 'firebase/firestore';
+import {addDoc, collection, getFirestore} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
 import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
 import TopBanner from '../modules/TopBanner';
 import TopHeaderBar from '../modules/TopHeaderBar';
-
 import { styles } from '../Style';
-
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 
 const AddPosts = ({navigation}) => {
 
   const auth = getAuth();
   const db = getFirestore();
 
-  const [Email, setEmail] = useState('');
-  const [Username, setUsername] = useState('');
   const [image, setImage] = useState(image)
   const [uploading, setUploading] = useState(false)
   const [post, setPost] = useState(post);
-  
   const [permission, setPermission] = useState(null);
 
+  const [pushpost, setPushPost] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  
+  //Setting the notifications
+   const setnotifications = () => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+      }),
+    });
+  }
+ //sending notifications
+  async function sendnotifications(pushpost) {
+    const send_message = {
+      to: pushpost,
+      title: auth.currentUser?.email,
+      body: 'Added a new post!' ,
+    };
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      body: JSON.stringify(send_message),
+    });
+  }
+
+ //registering push notifications
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } 
+  
+    return token;
+  }
+
+  //sending final notifications
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setPushPost(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  //gets camera permissions
   useEffect(() => {
     (async () => {
       const perm_status = await ImagePicker.getCameraPermissionsAsync();
@@ -35,9 +92,8 @@ const AddPosts = ({navigation}) => {
     }) ();
   }, []);
 
-
+  //picks and sets an image to setImage
   const pickImage = async () => {
-
     const set_image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       quality: 1,
@@ -46,11 +102,9 @@ const AddPosts = ({navigation}) => {
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
     }
-
-    console.log(set_image.assets[0].uri)
   };
   
-  
+  //picks and sets a camera imageto setImage
   const pickCamera = async () => {
     
   const set_image = await ImagePicker.launchCameraAsync({
@@ -64,32 +118,7 @@ const AddPosts = ({navigation}) => {
     console.log(set_image.assets[0].uri)
   };
 
-  const pickDoc = async () => {
-    const set_image = await DocumentPicker.getDocumentAsync({});
-    if (!set_image.canceled) {
-      setImage(set_image.uri);
-    }
-    console.log(set_image.uri)
-  }
-
-  const create_post = async() => {
-    
-    try {
-      addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
-        timestamp: serverTimestamp(),
-        Email: auth.currentUser?.email,
-        post: post,
-        image: image,
-        Username: Username,
-      });
-      alert("Post Created!");
-    }
-    catch (e) {
-      alert("Information Missing!");
-    }
-    
-  };
-
+  //uploads image to firebase
   const uploadImage = async () => {
 
     // Make a HTTP request to the file 
@@ -132,58 +161,72 @@ const AddPosts = ({navigation}) => {
       )
   }
 
+  //func to save posts to firebase and send push notifications
+  function create_post () {
+    try {
+      addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
+        timestamp: serverTimestamp(),
+        Email: auth.currentUser?.email,
+        post: post,
+        image: image,
+      });
+      sendnotifications(pushpost);
+    }
+    catch (e) {
+      alert("Information Missing!");
+    }
+  };
+
+  /*
+  const pickDoc = async () => {
+    const set_image = await DocumentPicker.getDocumentAsync({});
+    if (!set_image.canceled) {
+      setImage(set_image.uri);
+    }
+    console.log(set_image.uri)
+  }
+*/
+
+
+//Return all needed information and styles
   return (
     <View style = {styles.page} >
-
       <SafeAreaView>
-
-      
       <View>
         <TopHeaderBar navigation={navigation}/>
       </View>
 
       <TopBanner/>
       </SafeAreaView>
-        
-  
+      
       <Image style={styles.profile_icon}
        source={require('../assets/email_image.png')}>
       </Image>
 
       <SafeAreaView style = {styles.flatlist}> 
       <ScrollView>
+
       <TextInput style = {styles.post}
-      
         value = {post}
         onChangeText={Post => setPost(Post)}
         placeholder = "What is on your mind?"
         numberOfLines={50}
         multiline={true}
-        
-        
-        
-        
       />
- <Text>
-  
-    {'\n'} {'\n'}
-    </Text>
+
+      <Text>{'\n'} {'\n'}</Text>
 
     
     <TouchableOpacity onPress={pickCamera}>
-      <View style={styles.camera_border}>
-        
+        <View style={styles.camera_border}>
           <Image style={styles.camera_icon}
            source={require('../assets/camera_icon.png')}>
           </Image>
           <Text style = {styles.camera_text}>
             Camera
           </Text>
-
-      </View>
-
+        </View>
     </TouchableOpacity>
-    
    
     <TouchableOpacity onPress={pickImage}>
       <View style={styles.camera_roll_border}>
@@ -198,6 +241,7 @@ const AddPosts = ({navigation}) => {
       </View>
     </ TouchableOpacity>
 
+{/*
     <TouchableOpacity onPress={pickDoc}>
       <View style={styles.camera_border}>
         
@@ -211,6 +255,7 @@ const AddPosts = ({navigation}) => {
       </View>
 
     </TouchableOpacity>
+*/}
 
     <TouchableOpacity onPress={uploadImage}>
       <View style={styles.camera_roll_border}>
@@ -224,36 +269,31 @@ const AddPosts = ({navigation}) => {
         </Text>
 
       </View>
-    </ TouchableOpacity>
-  
-  
+    </TouchableOpacity>
 
-       <TouchableOpacity
+    <TouchableOpacity
         style = {styles.input}
-        onPress={create_post}
-    
+        onPress = {create_post}
         onPressOut={() =>navigation.navigate('Home')}
     >
     <Text style={styles.create_post}>Create New Post</Text>
 
 
-    </ TouchableOpacity>
+    </TouchableOpacity>
 
-    </ScrollView>
+  </ScrollView>
     
    
-    <View style = {styles.navs}>
+  <View style = {styles.navs}>
 
-<ButtonNavBar navigation={navigation}/>
+  <ButtonNavBar navigation={navigation}/>
 
-</View>  
-
-    </SafeAreaView>
-   
-    </View>
+    </View>  
+  </SafeAreaView>
+</View>
     
   );
-  }
+}
 
 
 export default AddPosts
