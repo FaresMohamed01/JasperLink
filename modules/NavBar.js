@@ -20,10 +20,10 @@ const NavBar = () => {
   
         </TouchableOpacity>
   
-        <TouchableOpacity onPress={() =>navigation.navigate('Home')} style = {styles.navigation}>
+        <TouchableOpacity onPress={() =>navigation.navigate('Search')} style = {styles.navigation}>
           <MaterialCommunityIcons
   
-            name={'bell-circle'}
+  name={'account-search'}
             color = 'green'
             size={40}
             />        
@@ -40,10 +40,10 @@ const NavBar = () => {
   
         </TouchableOpacity>
         
-        <TouchableOpacity onPress={() =>navigation.navigate('Search')} style = {styles.Search}>
+        <TouchableOpacity onPress={() =>navigation.navigate('Settings')} style = {styles.Search}>
           <MaterialCommunityIcons
   
-            name={'account-search'}
+            name={'wrench'}
             color = 'green'
             size={40}
             />        
