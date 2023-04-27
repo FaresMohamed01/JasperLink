@@ -6,8 +6,8 @@ import SearchBox from './SearchBox';
 import { styles } from '../Style';
 import RefinementList from './RefinementList';
 import InfiniteHits from './InfiniteHits';
-import ButtonNavBar from '../modules/NavBar'
-
+import ButtonNavBar from '../modules/ButtonNavBar'
+import TopHeaderBar from '../modules/TopHeaderBar';
 //Configure the algoliasearch settings using our API key and APP ID
 const searchClient = algoliasearch(
   "9YLY0N9A8X",
@@ -16,24 +16,43 @@ const searchClient = algoliasearch(
 
 const Search = ({navigation}) => {
   return (
-    <SafeAreaView styles={styles.page}>
+    <View style = {styles.page}>
+
+      <View>
+        <TopHeaderBar navigation={navigation}/>
+      </View>
+
+      <SafeAreaView style = {styles.flatlist}>
 
       {/*InstantSearch provided by Algolia to make the search happen. Calls the indexname that we called "users"*/}
-      <InstantSearch
+      <InstantSearch 
         searchClient={searchClient}
         indexName="users"
       >
          {/*Calls our search box, refinement list, infinitehits"*/}
+      
+      <View style = {styles.search_bar}>
       <SearchBox />
-      <RefinementList  attribute="Username" />
+      </View>
+      
+      <View>
+        <RefinementList  attribute="Username" />
+      </View>
+      
+      
       <InfiniteHits />
-  
+      
+      
+      
       </InstantSearch>
-        <SafeAreaView style = {styles.nav}>
-          <ButtonNavBar/>
+
+        <View style = {styles.navs}>
+          <ButtonNavBar navigation={navigation}/>
+        </View> 
+
         </SafeAreaView>
 
-    </SafeAreaView>
+    </View>
 
   )
 }
