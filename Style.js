@@ -469,6 +469,17 @@ camera_roll_border:{
   bottom:59,
 },
 
+upload_border:{
+  borderWidth: 1,
+  borderColor: 'black',
+  backgroundColor:'#36454F',
+  borderRadius:20,
+  width:150,
+  height:60,
+  left:127,
+  bottom:5,
+},
+
 camera_roll_icon:{
   height:27,
   width:27,
@@ -496,8 +507,8 @@ upload_image_border:{
 upload_image_icon:{
   height:27,
   width:27,
-  top:14,
-  left:8,
+  top:16,
+  left:28,
   //backgroundColor:'white'
 },
 
@@ -526,7 +537,7 @@ doc_icon:{
 },
 
 upload_image_text:{
-  left:43,
+  left:65,
   bottom:23,
   color:'white'
 },
@@ -723,7 +734,7 @@ menu:{
   borderRadius:5,
   top:50,
   position:"absolute",
-  borderRadius:20
+  borderRadius:20,
 },
 
 menuItem:{
@@ -1121,13 +1132,75 @@ direct_message_text_border:{
   backgroundColor:'#36454F',
   marginTop:15,
   marginBottom:10,
-  padding:14,
+  paddingTop:15,
+  paddingLeft:20
 },
 direct_message_text:{
   color:'white',
   fontWeight:'bold',
+  left:40,
+  bottom:20,
+},
+direct_message_profile_icon:{
+  height:25,
+  width:25,
+  borderRadius:40,
+  backgroundColor:'white'
+},
+//////
+settings_top_text_border:{
+  borderWidth:1,
+  backgroundColor:'black',
+  marginBottom:50
+},
+settings_top_text:{
+  fontSize:30,
+  textAlign:'center',
+  color:'white',
+
+},
+settings_text_border:{
+  borderBottomWidth:1,
+  borderColor:'grey',
+  width:300,
+  marginLeft:53
+},
+settings_text:{
+  
+  padding:10,
+  fontSize:17,
+  color:'white'
+},
+settings_navs:{
+  backgroundColor: `#93C572`,
+  height:70,
+  marginTop:497,
+},
+/////
+about_us_navs:{
+  backgroundColor: `#93C572`,
+  height:70,
+  marginTop:100,
 },
 
+about_us_border:{
+  borderRadius: 20,
+  backgroundColor:'#93C572',
+  width: 360,
+  height: 610,
+  alignSelf: 'center',
+  top:48
+},
+about_us_text_border:{
+  paddingLeft:20,
+  paddingRight:20,
+  marginTop:50
+},
+about_us_text:{
+  color:'#023020',
+  fontSize:14.6,
+  fontFamily:'Sinhala Sangam MN'
+}
 
 });
 
