@@ -260,7 +260,6 @@ new_user_button:{
 page: {
   flex: 1,
   backgroundColor: '#023020',
-  
 },
 
 fontStyle:{
@@ -1032,6 +1031,103 @@ Initial_SignUp_Email_Border:{
 },
 
 /////////////////////////////
+
+search_bar:{
+  //paddingBottom:100,
+  backgroundColor:'#023020',
+
+},
+filtered_names:{
+  color:'green',
+  fontWeight:'bold'
+},
+filtered_emails:{
+  color:'grey',
+  
+},
+filtered_border:{
+  backgroundColor:'white',
+  marginBottom:10,
+  padding:14
+},
+///////
+comment_post: {
+  marginTop:10,
+  borderWidth: 1,
+  paddingLeft: 30,
+  paddingBottom:30,
+  paddingRight:5,
+  fontSize: 20,
+  fontFamily: 'Sinhala Sangam MN',
+  borderColor: 'black',  
+  backgroundColor:'white',
+},
+
+comment_submit_button:{
+  fontSize: 20,
+  fontFamily: 'Sinhala Sangam MN',
+  textAlign:'center',
+  fontSize:27,
+  color:'white',
+  top:20,
+  borderWidth:1,
+  backgroundColor:'black',
+  padding:5,
+  width:250,
+  left:80,
+},
+/////////////////
+User_Comments_border:{
+  backgroundColor:'white',
+  borderWidthTop:5,
+  borderBottomWidth:5,
+  borderColor:'black',
+  marginBottom:5,
+  marginTop:10
+
+},
+User_Comments_private_email:{
+  fontSize:14,
+  color:'black',
+  fontFamily:'Verdana-Bold',
+  top:9,
+  left:50,
+},
+User_Comments_abstract:{
+  color:'green',
+  fontWeight:'bold',
+  fontSize:16,
+  left:20,
+},
+User_Comments_users_post:{
+  color:'black',
+  left:0,
+  paddingLeft:20,
+  paddingRight:15,
+  paddingTop:10,
+  paddingBottom:25,
+  fontSize:15,
+},
+///////
+direct_message_title:{
+  textAlign:'center',
+  borderWidth:2,
+  backgroundColor:'black',
+  fontSize:20,
+  padding:10,
+  color:'white',
+},
+direct_message_text_border:{
+  backgroundColor:'#36454F',
+  marginTop:15,
+  marginBottom:10,
+  padding:14,
+},
+direct_message_text:{
+  color:'white',
+  fontWeight:'bold',
+},
+
 
 });
 
