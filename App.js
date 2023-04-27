@@ -8,7 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddPosts from './screens/AddPosts';
 import Profile from './screens/Profile';
-import NavBar from './modules/NavBar';
+import ButtonNavBar from './modules/ButtonNavBar';
 import Comments from './screens/Comments';
 import {firebase} from './firebase';
 import PostCard from './modules/PostCard';
@@ -17,14 +17,13 @@ import Settings from './screens/Settings';
 import ChatRoom from './screens/ChatRoom';
 import FullProfile from './screens/FullProfile';
 import UserComments from './screens/UserComments';
-import { connectSearchBox } from 'react-instantsearch-native';
+import AboutUs from './screens/AboutUs';
 import SearchBox from './screens/SearchBox';
 import InfiniteHits from './screens/InfiniteHits';
 import RefinementList from './screens/RefinementList';
 import Search from './screens/Search';
 import SearchProfiles from './screens/SearchProfiles'
 import LandingScreen from './screens/LandingScreen';
-import InitialSignUp from './screens/InitialSignUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,9 +45,9 @@ const App = ({navigation}) => {
           headerShown: false
             }}  component={LoginScreen} />
 
-        <Stack.Screen name = "NavBar" options={{
+        <Stack.Screen name = "ButtonNavBar" options={{
           headerShown: false
-            }} component={NavBar}/>
+            }} component={ButtonNavBar}/>
         
         <Stack.Screen name="Home"options={{
           headerShown: false
@@ -88,14 +87,11 @@ const App = ({navigation}) => {
 <Stack.Screen name="SearchProfiles" options={{
            headerShown: false
             }} component={SearchProfiles} /> 
-
-<Stack.Screen name="InfiniteHits" options={{
+            
+<Stack.Screen name="AboutUs" options={{
            headerShown: false
-            }} component={InfiniteHits} /> 
+            }} component={AboutUs} /> 
     
-      <Stack.Screen name="InitialSignUp" options={{
-          headerShown: false
-            }} component={InitialSignUp} />
  
       </Stack.Navigator>
 
