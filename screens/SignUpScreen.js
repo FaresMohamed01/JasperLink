@@ -210,8 +210,8 @@ const SignUpScreen = ({route, navigation}) => {
 
            </View>
         </View>
-        </ImageBackground>
-      </View>
+      </ImageBackground>
+     </View>
     )
   }
 
