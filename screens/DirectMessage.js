@@ -4,7 +4,8 @@ import { db } from '../firebase'
 import { collection, getDoc, getDocs, where, query, collectionGroup, orderBy } from 'firebase/firestore'
 import { auth } from '../firebase'
 import { async } from '@firebase/util'
-import ButtonNavBar from '../modules/NavBar'
+import TopHeaderBar from '../modules/TopHeaderBar'
+import ButtonNavBar from '../modules/ButtonNavBar'
 import { styles } from '../Style'
 
 
@@ -43,12 +44,18 @@ const DirectMessage = ({user, navigation}) => {
   
 
       return (
-        <View>
-           
-        <SafeAreaView >
+        <View style = {styles.page}>
+
+          <View>
+            <TopHeaderBar navigation={navigation}/>
+          </View>
+
+          <Text style = {styles.direct_message_title}>Inbox</Text>
+
+        <SafeAreaView style = {styles.flatlist}>
            
           <StatusBar />
-            <View>
+            
                 <FlatList
                     data={posts}
                     keyExtractor={(item)=>item.id}
@@ -56,24 +63,34 @@ const DirectMessage = ({user, navigation}) => {
                       <TouchableOpacity onPress={() => navigation.navigate('ChatRoom', {name: item.Email})} >
                       <View style={styles.card} >
                           <Image source={{uri: 'https://placeimg.com/140/140/any'}} />
-                        <View style={styles.textArea}>
-                      <Text style={styles.nameText} >{item.Email}</Text>
-                      </View>
+                          
+                          
+                        <View style={styles.direct_message_text_border}>
+                            
+                            <Text>
+                              <Image style={styles.direct_message_profile_icon}
+                                source={require('../assets/MC_Round_Icon.png')}>
+                              </Image>
+                            </Text>
+                            <Text style={styles.direct_message_text} >
+                                {item.Email}
+                            </Text>
+                        </View>
                       </View>
                       </TouchableOpacity>
                     )}
                     />
-            </View>
-            <View style = {styles.nav}>
-        <ButtonNavBar navigation={navigation}/>
-      </View>  
+            
+          <View style = {styles.navs}>
+            <ButtonNavBar navigation={navigation}/>
+          </View> 
+
+
         </SafeAreaView>
 
-         
          </View>
          
       );
     };
 
 export default DirectMessage
-
