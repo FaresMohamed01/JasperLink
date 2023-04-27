@@ -1,3 +1,4 @@
+//Add posts page
 import React from 'react';
 import {useState, useEffect, useRef} from 'react';
 import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput } from 'react-native';
