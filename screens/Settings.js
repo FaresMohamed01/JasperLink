@@ -1,5 +1,8 @@
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, SafeAreaView } from 'react-native'
 import React from 'react'
+import { styles } from '../Style';
+import TopHeaderBar from '../modules/TopHeaderBar';
+import ButtonNavBar from '../modules/ButtonNavBar';
 
 const Settings = ({navigation}) => {
 
@@ -14,26 +17,51 @@ const Settings = ({navigation}) => {
 }
 
   return (
-    <SafeAreaView>
+    <View style = {styles.page}>
+       <View>
+        <TopHeaderBar navigation={navigation}/>
+      </View>
+
+    <View style = {styles.settings_top_text_border}>
+      <Text style = {styles.settings_top_text}>
+        Settings
+      </Text>
+    </View>
+
+    <SafeAreaView style = {styles.flatlist}>
+
      <TouchableOpacity
-        style = {styles.input}
+        style = {styles.settings_text_border}
         onPress={() =>navigation.navigate('Profile')}
     >
-    <Text style={styles.Text}>Change Profile Information</Text>
+    <Text style={styles.settings_text}>Change Profile Information</Text>
 
     </ TouchableOpacity>
 
     <TouchableOpacity
-                 onPress={() =>navigation.navigate('Login')}
-             >
-             <Text>Sign Out</Text>
- 
-          </ TouchableOpacity>
+        style = {styles.settings_text_border}
+        onPress={() =>navigation.navigate('AboutUs')}
+    >
+    <Text style={styles.settings_text}>About Us</Text>
+
+    </ TouchableOpacity>
+
+    <TouchableOpacity
+      style = {styles.settings_text_border}
+      onPress={() =>navigation.navigate('Login')}
+    >
+      <Text style={styles.settings_text}>Sign Out</Text>
+    </ TouchableOpacity>
+
+    <View style = {styles.settings_navs}>
+      <ButtonNavBar navigation={navigation}/>
+    </View>
+
 
     </SafeAreaView>
+    </View>
   )
 }
 
-export default Settings
 
-const styles = StyleSheet.create({})
+export default Settings
