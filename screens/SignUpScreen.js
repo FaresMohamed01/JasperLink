@@ -1,19 +1,17 @@
+//Sign Up Page
 import React from 'react';
-import { useState, useEffect } from 'react';
-import {Button,ScrollView, Text, View, Image, TouchableOpacity, TextInput, ImageBackground} from 'react-native';
-import {app, db} from '../firebase';
-import {getAuth,createUserWithEmailAndPassword, sendSignInLinkToEmail, signInWithPopup, FacebookAuthProvider, signInWithRedirect, signInWithEmailLink} from 'firebase/auth';
-import {addDoc, collection,setDoc, doc} from 'firebase/firestore';
-import { StyleSheet } from 'react-native';
+import { useState} from 'react';
+import {Text, View, Image, TouchableOpacity, TextInput, ImageBackground} from 'react-native';
+import {db} from '../firebase';
+import {getAuth,createUserWithEmailAndPassword} from 'firebase/auth';
+import {setDoc, doc} from 'firebase/firestore';
 import { styles } from '../Style';
-import { GoogleAuthProvider } from 'firebase/auth';
 import TopHeaderBar from '../modules/TopHeaderBar';
-import { useNavigationState } from '@react-navigation/native';
 import redx from '../assets/Red_x.png'
 
 const SignUpScreen = ({route, navigation}) => {
 
-
+  //Needed information for sign up and user profile
   const [Email, setEmail] = useState(null);
   const [first, setFirst] = useState(null);
   const [last, setLast] = useState(null);
@@ -31,38 +29,41 @@ const SignUpScreen = ({route, navigation}) => {
   const [Bookmarks, setBookmarks] = useState([]);
   const [Friends, setFriends] = useState([]);
 
-  const pattern = new RegExp("^[a-zA-Z0-9+_.-]+@manhattan.edu$");
-    const [isValid, setIsValid] = useState(true);
   const auth = getAuth();
 
+  //Pattern to check Email is @manhattan.edu
+  const pattern = new RegExp("^[a-zA-Z0-9+_.-]+@manhattan.edu$");
+    const [EmailisValid, setEmailIsValid] = useState(true);
+    const [PasswordisValid, setPasswordIsValid] = useState(true);
+     
+
+  //Specifically checking for passwords
   const validCheck = () => {
-    if(Password == confirmPassword){
-      setIsValid(false)
+    if(Password != confirmPassword){
+      setPasswordIsValid(false)
     }
     else{
-      setIsValid(true)
+      setPasswordIsValid(true)
     }
 
   }
 
+//Specifically checking for emails
   const validateEmail = (Email) => {
     if (pattern.test(Email)) {
-        setIsValid(true);
+        setEmailIsValid(true);
     } else{
-        setIsValid(false);
+        setEmailIsValid(false);
     }
 }
 
   
   //creates a user in firebase
   const SignUp = async ({navigation}) => {
-
    try {
-
      await createUserWithEmailAndPassword(auth,Email, Password)
 
      setDoc(doc(db,`users`,`${auth.currentUser?.email}`),{
-          
       Email: auth.currentUser?.email,
       first: first,
       last: last,
@@ -83,14 +84,9 @@ const SignUpScreen = ({route, navigation}) => {
     catch(error){
       alert ("Error! Check your Information")
     }
-    
-
   }
 
-
-  
-
-
+  //Return all information on signup page
   return(
     <View style = {styles.container}>
         
@@ -99,7 +95,6 @@ const SignUpScreen = ({route, navigation}) => {
         <View>
             <TopHeaderBar navigation={navigation}/>
         </View>
-
 
         <View style={styles.signup_border}>
            
@@ -116,7 +111,7 @@ const SignUpScreen = ({route, navigation}) => {
                placeholder = " John Doe"
                autoCapitalize="none"
                autoCorrect={false}
-             />
+              />
 
               <Image style={styles.signup_email_icon}
                source={require('../assets/email_image.png')}>
@@ -141,19 +136,16 @@ const SignUpScreen = ({route, navigation}) => {
                         source={require('../assets/email_image.png')}>
                 </Image>
             
-                {isValid?null:
+                {EmailisValid?null:
                     <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}>
                         <Image source={redx} style={{width: 20, height: 20, position:'absolute', left:'5%'}}/>
                         <Text style={{color:'red'}}>Please enter a valid MC email address</Text>
                     </View>
                 }
-
             </View>
  
            <Text style={styles.signup_email}> Password </Text>
- 
            <View style={styles.signup_email_border}>
- 
              <TextInput 
                style = {styles.signup_password_text}
                value = {Password}
@@ -188,15 +180,14 @@ const SignUpScreen = ({route, navigation}) => {
                source={require('../assets/password_icon.png')}>
              </Image>
 
-             {isValid && <Image style={{height:20,width:20,left:60,bottom:2}} source={require('../assets/Red_x.png')}>
+             {PasswordisValid && <Image style={{height:20,width:20,left:60,bottom:2}} source={require('../assets/Red_x.png')}>
               
               </Image>}
-            {isValid&&<Text style = {styles.signup_dont_match}>
+            
+            {PasswordisValid&&<Text style = {styles.signup_dont_match}>
               Passwords do not match
             </Text>}
 
-              
-            
            </View>
  
            <Text style={styles.have_account_text}>Already have an account?</Text>
@@ -212,26 +203,16 @@ const SignUpScreen = ({route, navigation}) => {
              <TouchableOpacity 
                style = {styles.input}              
                onPress={SignUp}
-
              >
- 
                <Text style={styles.sign_up_button}>SIGN UP</Text>
-             
+  
              </ TouchableOpacity>
 
            </View>
-
         </View>
-
         </ImageBackground>
       </View>
-  )
+    )
   }
-
-   
-  
-
- 
-
 
 export default SignUpScreen;
