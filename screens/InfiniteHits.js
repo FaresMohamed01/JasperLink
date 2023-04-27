@@ -25,10 +25,10 @@ const InfiniteHits = ({ hits, hasMore, refineNext, route, navigation}) => {
       <TouchableOpacity
           onPress={() =>navigation.navigate('SearchProfiles')}
       >
-       
-       <Text>{item.Username}</Text> 
-       <Text>{item.Email}</Text> 
-       
+       <View style = {styles.filtered_border}>
+        <Text style = {styles.filtered_names}>{item.Username}</Text> 
+        <Text style = {styles.filtered_emails}>{item.Email}</Text> 
+       </View>
                </TouchableOpacity>
                 </View>
             )}
