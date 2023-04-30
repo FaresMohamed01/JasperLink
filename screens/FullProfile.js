@@ -23,13 +23,13 @@ const FullProfile = ({navigation}) => {
    
     get_user.forEach((doc) => {
 
-      const { Email, Password, Username, GPA, first, last, information, major, school, image } = doc.data()
+      const { Email, Password, Name, GPA, first, last, information, major, school, image } = doc.data()
 
       users.push ({
         id: doc.id,
         Email,
         Password,
-        Username,
+        Name,
         GPA,
         first,
         last,
@@ -68,7 +68,7 @@ const FullProfile = ({navigation}) => {
             
            
                 <Text style = {styles.profile_full_name}>
-                    {item.first} {item.last}
+                    {item.Name}
                 </Text>
            
             
@@ -85,13 +85,9 @@ const FullProfile = ({navigation}) => {
                     <Text >
                         <Text>{'\n'}</Text>
                           
-                        <Text style = {styles.first_name_text} >   First Name: </Text> 
-                        <Text style = {styles.first_name} >{item.first}</Text>
+                        <Text style = {styles.username_text} >   Full Name: </Text>
+                        <Text style = {styles.username} >{item.Name}</Text>
 
-                        <Text>{'\n'}{'\n'}</Text>
-
-                        <Text style = {styles.last_name_text} >   Last Name: </Text>
-                        <Text style = {styles.last_name} >{item.last}</Text>
 
                         <Text>{'\n'}{'\n'}</Text>
 
@@ -100,10 +96,10 @@ const FullProfile = ({navigation}) => {
 
                         <Text>{'\n'}{'\n'}</Text>
 
-                        <Text style = {styles.username_text} >   Username: </Text>
-                        <Text style = {styles.username} >{item.Username}</Text>
+                        <Text style = {styles.school_text} >   School: </Text> 
+                        <Text style = {styles.school} >{item.school}</Text>
 
-                        <Text>{'\n'}</Text>
+
                     </Text>
                 </View>
 
@@ -112,11 +108,6 @@ const FullProfile = ({navigation}) => {
                 <View style = {styles.profile_border2} >
                     <Text >
                         <Text>{'\n'}</Text>
-
-                        <Text style = {styles.school_text} >   School: </Text> 
-                        <Text style = {styles.school} >{item.school}</Text>
-
-                        <Text>{'\n'}{'\n'}</Text>
 
                         <Text style = {styles.major_text} >   Major: </Text>
                         <Text style = {styles.major} >{item.major}</Text>
@@ -131,7 +122,6 @@ const FullProfile = ({navigation}) => {
                         <Text style = {styles.extra_info_text} >   Extra Information: </Text>
                         <Text style = {styles.extra_info} >{item.information}</Text>
 
-                        <Text>{'\n'}</Text>
                     </Text>
                 </View>
 
