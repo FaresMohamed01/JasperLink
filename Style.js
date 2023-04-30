@@ -559,25 +559,25 @@ full_profile_page:{
 },
 
 users_image:{
-  width:80,
-  height:80,
+  width:100,
+  height:90,
   backgroundColor:'white',
   borderRadius: 40,
-  left:166,
-  top:35
+  left:150,
+  top:24
 },
 
 profile_full_name:{
-  left:130,
+  left:125,
   color:'white',
   fontSize:25,
-  top:10,
+  top:5,
   
 },
 
 hold_profile_info:{
-  top:40,
-  width:430,
+  top:20,
+  width:410,
   height:495,
   borderWidth:5,
   borderColor:'black',
@@ -599,8 +599,8 @@ profile_border1:{
   borderRadius:20,
   borderWidth:5,
   backgroundColor:'#36454F',
-  width:380,
-  height:180,
+  width:360,
+  height:145,
   bottom:424,
 },
 
@@ -663,8 +663,8 @@ profile_border2:{
   borderRadius:20,
   borderWidth:5,
   backgroundColor:'#36454F',
-  width:380,
-  height:180,
+  width:360,
+  height:150,
   bottom:399,
   marginBottom:-360
 },
@@ -771,7 +771,7 @@ Edit_Profile_Fname_Text:{
   color:'white',
   fontSize:18,
   fontWeight:'bold',
-  top:10,
+  top:0,
   left:26,
   marginTop:10
 },
@@ -779,7 +779,7 @@ Edit_Profile_Fname_Text:{
 Edit_Profile_Fname:{
   borderWidth: 3,
   padding: 20,
-  width:175,
+  width:355,
   borderRadius:10,
   fontSize: 20,
   borderColor: 'black',
@@ -787,31 +787,12 @@ Edit_Profile_Fname:{
   backgroundColor:'white',
 },
 
-Edit_Profile_Lname_Text:{
-  color:'white',
-  fontSize:18,
-  fontWeight:'bold',
-  left:220,
-  bottom:11
-},
-
-Edit_Profile_Lname:{
-  borderWidth: 3,
-  padding: 20,
-  width:175,
-  borderRadius:10,
-  fontSize: 20,
-  borderColor: 'black',
-  left:215,
-  bottom:70,
-  backgroundColor:'white',
-},
 
 Edit_Profile_School_Text:{
   color:'white',
   fontSize:18,
   fontWeight:'bold',
-  bottom:60,
+  bottom:5,
   left:26,
   marginTop:10
 },
@@ -819,13 +800,13 @@ Edit_Profile_School_Text:{
 Edit_Profile_School:{
   borderWidth: 3,
   padding: 20,
-  width:370,
+  width:355,
   borderRadius:10,
   fontSize: 20,
   borderColor: 'black',
   left:20,
   backgroundColor:'white',
-  bottom:50,
+  bottom:7,
 
 },
 
@@ -833,7 +814,7 @@ Edit_Profile_Major_Text:{
   color:'white',
   fontSize:18,
   fontWeight:'bold',
-  bottom:30,
+  bottom:1,
   left:26,
 },
 
@@ -846,7 +827,7 @@ Edit_Profile_Major:{
   borderColor: 'black',
   left:20,
   backgroundColor:'white',
-  bottom:40,
+  bottom:20,
 },
 
 Edit_Profile_GPA_Text:{
@@ -854,18 +835,18 @@ Edit_Profile_GPA_Text:{
   fontSize:18,
   fontWeight:'bold',
   left:220,
-  bottom:51
+  bottom:20
 },
 
 Edit_Profile_GPA:{
   borderWidth: 3,
   padding: 20,
-  width:175,
+  width:160,
   borderRadius:10,
   fontSize: 20,
   borderColor: 'black',
   left:215,
-  bottom:109,
+  bottom:90,
   backgroundColor:'white',
 },
 
@@ -873,7 +854,7 @@ Edit_Profile_Info_Text:{
   color:'white',
   fontSize:18,
   fontWeight:'bold',
-  bottom:100,
+  bottom:80,
   left:26,
   marginTop:10
 },
@@ -881,13 +862,13 @@ Edit_Profile_Info_Text:{
 Edit_Profile_Info:{
   borderWidth: 3,
   padding: 20,
-  width:370,
+  width:355,
   borderRadius:10,
   fontSize: 20,
   borderColor: 'black',
   left:20,
   backgroundColor:'white',
-  bottom:85,
+  bottom:70,
 },
 
 Edit_Profile_Save_Button:{
@@ -1173,14 +1154,14 @@ settings_text:{
 },
 settings_navs:{
   backgroundColor: `#93C572`,
-  height:70,
-  marginTop:497,
+  height:80,
+  marginTop:450,
 },
 /////
 about_us_navs:{
   backgroundColor: `#93C572`,
   height:70,
-  marginTop:100,
+  marginTop:60,
 },
 
 about_us_border:{
@@ -1199,6 +1180,25 @@ about_us_text_border:{
 about_us_text:{
   color:'#023020',
   fontSize:14.6,
+  fontFamily:'Sinhala Sangam MN'
+},
+///////////////////////////////////
+friends:{
+  top:70,
+  left:67,
+},
+follows:{
+  left:300,
+  bottom:15,
+},
+friend :{
+  color:"white",
+  fontSize:20,
+  fontFamily:'Sinhala Sangam MN'
+},
+follow :{
+  color:"white",
+  fontSize:20,
   fontFamily:'Sinhala Sangam MN'
 }
 
