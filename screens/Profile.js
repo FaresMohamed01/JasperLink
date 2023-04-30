@@ -12,12 +12,12 @@ import * as DocumentPicker from 'expo-document-picker';
 
 
 
-const Profile = ({navigation, userd}) => {
+const Profile = ({navigation}) => {
 
   const [Email, setEmail] = useState(null);
   const [Username, setUsername] = useState(null);
-  const [first, setFirst] = useState(first);
-  const [last, setLast] = useState(last);
+  const [Password, setPassword] = useState(null);
+  const [Name, setName] = useState(Name);
   const [school, setSchool] = useState(school);
   const [major, setMajor] = useState(major);
   const [GPA, setGPA] = useState(GPA);
@@ -25,8 +25,7 @@ const Profile = ({navigation, userd}) => {
   const [image, setImage] = useState(image)
   const [uploading, setUploading] = useState(false)
 
-  const [Bookmarks, setBookmarks] = useState([]);
-  const [Friends, setFriends] = useState([]);
+
 
   const [users, setUsers] = useState([]);
   const user = query(collection(db,"users"),  where ("Email","==", auth.currentUser?.email));
@@ -34,29 +33,22 @@ const Profile = ({navigation, userd}) => {
 
     //creates a user in firebase
     const ProfileFirestore = async ({navigation,users}) => {
-      try {
-  
         updateDoc(doc(db,`users/${auth.currentUser?.email}`),{
           Email: auth.currentUser?.email,
-          first: first,
-          last: last,
+          Name: Name,
+          Password: Password,
           school: school,
           major:  major,
           GPA: GPA,
           information: information,
-          Bookmarks: Bookmarks,
-          Friends: Friends,
           image: image
           
         });
   
         setUsers(users)
         alert("Information added!");
-      }
       
-        catch (e) {
-          alert("Information Missing!");
-        }
+  
     }
 
     const [permission, setPermission] = useState(null);
@@ -155,30 +147,18 @@ const Profile = ({navigation, userd}) => {
         <ScrollView>
   
         <View>
-          <Text style = {styles.Edit_Profile_Fname_Text} >First Name</Text>
+          <Text style = {styles.Edit_Profile_Fname_Text} >Full Name</Text>
         </View>
   
-        <View>
-          <Text style = {styles.Edit_Profile_Lname_Text}>Last Name</Text>
-        </View>
   
          <TextInput style = {styles.Edit_Profile_Fname}
-            value = {first}
-            onChangeText={first => setFirst(first)}
+            value = {Name}
+            onChangeText={Name => setName(Name)}
             autoCapitalize="none"
-            placeholder = "First Name"
+            placeholder = "Full Name"
             autoCorrect={false}
             
           />
-  
-          <TextInput style = {styles.Edit_Profile_Lname}
-            value = {last}
-            onChangeText={last => setLast(last)}
-            autoCapitalize="none"
-            placeholder = "Last Name"
-            autoCorrect={false}
-          />
-  
           <View>
             <Text style = {styles.Edit_Profile_School_Text} >School</Text>
           </View>
