@@ -1,69 +1,65 @@
+//Login Page
 import React from 'react';
-import { useContext, useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import {ScrollView, StyleSheet, Text, Button, View, Image, TouchableOpacity, SafeAreaView, TextInput, ImageBackground } from 'react-native';
-import { useFonts } from 'expo-font';
-import {auth} from '../firebase';
-import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
-import { styles } from '../Style';
+import { useState, useEffect } from 'react';
+import {Text, View, Image, TouchableOpacity, TextInput, ImageBackground } from 'react-native';
+import {getAuth,signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import {styles } from '../Style';
 import TopHeaderBar from '../modules/TopHeaderBar';
 
 const LoginScreen = ({navigation}) => {
     const [Email, onChangeEmail] = useState(null);
     const [Password, onChangePassword] = useState(null);
-    const [buttonText, setButtonText] = useState("Login")
     const auth = getAuth();
-
 
     const actionCodeSettings = {
         url: 'https://capstoneproject-7ce43.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
         handleCodeInApp: true,
         dynamicLinkDomain: 'capproject.page.link'
-      };
+    };
     
-
+    //Makes sure email verified before signs in
     useEffect(() => {
         const loggedin = auth.beforeAuthStateChanged(user => {
-          if (user) {
+          if (user.emailVerified) {
             navigation.navigate("Home")
+            alert("Verified!")
+          }
+          else{
+            alert("Not Verified!")
           }
         })
-    
         return loggedin
-      }, [])
+    }, [])
 
      //creates a user in firebase
-     const LoginAuth = ({navigation}) => {
-        signInWithEmailAndPassword(auth, Email,Password)
-        .catch(error => alert(error.message))
+    const LoginAuth = async({navigation}) => {
+      signInWithEmailAndPassword(auth, Email, Password)
+      
+      .catch((error) => {
+        alert ("Account doesn't exist!")
+      })
 
-     }
+    }
 
-     const forget_password = ({navigation}) => {
+    //Reset Password Feature
+    const forget_password = ({navigation}) => {
+      sendPasswordResetEmail(auth, Email, actionCodeSettings)
         
-        sendPasswordResetEmail(auth, Email, actionCodeSettings)
-        .catch(error => alert(error.message))
-      }
+      alert ("Reset Password Email Sent!")
+    }
+      
+    return (
+      <View style = {styles.container}>
+        <ImageBackground style = {styles.background_image} source={require('../assets/background.jpg')}>
 
-      const delete_user = ({navigation}) => {
-        deleteUser(auth, Email, Password)
-        .catch(error => alert(error.message))
-      }
+          <View>
+            <TopHeaderBar navigation={navigation}/>
+          </View>
 
+          <View style={styles.login_border}>
+            <Text style={styles.login_text}> Login </Text>
 
-      return (
-        <View style = {styles.container}>
-            <ImageBackground style = {styles.background_image} source={require('../assets/background.jpg')}>
-
-            <View>
-              <TopHeaderBar navigation={navigation}/>
-            </View>
-
-            <View style={styles.login_border}>
-           
-                <Text style={styles.login_text}> Login </Text>
-
-                <Text style={styles.login_email}> Email </Text>
+              <Text style={styles.login_email}> Email </Text>
 
                 <View style={styles.login_email_border}>
 
@@ -71,7 +67,7 @@ const LoginScreen = ({navigation}) => {
                         style = {styles.login_email_text}
                         value = {Email}
                         onChangeText = {onChangeEmail}
-                        placeholder = " example@manhattan.edu"
+                        placeholder = " jdoe01@manhattan.edu"
                         autoCapitalize="none"
                         keyboardType="email-address"
                         autoCorrect={false}
@@ -113,7 +109,6 @@ const LoginScreen = ({navigation}) => {
                     <View style={styles.login_button_border}>
                         <TouchableOpacity 
                             style = {styles.input}
-                            Emailverified
                             onPress={LoginAuth} 
                         >
 
@@ -132,11 +127,8 @@ const LoginScreen = ({navigation}) => {
                     </ TouchableOpacity>
 
                 </View>
-
-              
-
-      </ImageBackground>
-    </View>
+        </ImageBackground>
+      </View>
   );
 };
 
