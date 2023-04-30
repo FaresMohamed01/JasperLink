@@ -1,10 +1,9 @@
-//Add posts page
 import React from 'react';
 import {useState, useEffect, useRef} from 'react';
-import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput } from 'react-native';
+import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput, FlatList } from 'react-native';
 import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
-import {addDoc, collection, getFirestore} from 'firebase/firestore';
+import {addDoc, collection, getFirestore, getDocs,query, where} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
 import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +19,8 @@ const AddPosts = ({navigation}) => {
   const auth = getAuth();
   const db = getFirestore();
 
+  const user = firebase.auth().currentUser;
+
   const [image, setImage] = useState(image)
   const [uploading, setUploading] = useState(false)
   const [post, setPost] = useState(post);
@@ -29,21 +30,58 @@ const AddPosts = ({navigation}) => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-  
-  //Setting the notifications
-   const setnotifications = () => {
+  const [users, setUsers] = useState([]);
+  const user_query = query(collection(db,`users`),  where ("Email","==", auth.currentUser?.email));
+
+
+  useEffect(()=> {
+
+  async function document(){
+
+    const get_user = await getDocs(user_query) 
+
+    const users = []
+   
+    get_user.forEach((doc) => {
+
+      const { Email, Password, Name, GPA, first, last, information, major, school, image } = doc.data()
+
+      users.push ({
+        id: doc.id,
+        Email,
+        Password,
+        Name,
+        GPA,
+        first,
+        last,
+        information,
+        major,
+        school,
+        image
+      })
+
+    })
+
+    setUsers(get_user.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+  }
+   
+ 
+  document()
+  },[])
+
+   //Setting the notifications
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
       }),
     });
-  }
+  
  //sending notifications
   async function sendnotifications(pushpost) {
     const send_message = {
       to: pushpost,
       title: auth.currentUser?.email,
-      body: 'Added a new post!' ,
+      body: 'Your Post is now live!' ,
     };
     await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
@@ -85,6 +123,7 @@ const AddPosts = ({navigation}) => {
     };
   }, []);
 
+
   //gets camera permissions
   useEffect(() => {
     (async () => {
@@ -96,7 +135,7 @@ const AddPosts = ({navigation}) => {
   //picks and sets an image to setImage
   const pickImage = async () => {
     const set_image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
       allowsMultipleSelection: true
     });
@@ -109,7 +148,7 @@ const AddPosts = ({navigation}) => {
   const pickCamera = async () => {
     
   const set_image = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
@@ -161,22 +200,22 @@ const AddPosts = ({navigation}) => {
       }
       )
   }
+ //func to save posts to firebase and send push notifications
+ function create_post () {
+  try {
+    addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
+      timestamp: serverTimestamp(),
+      Email: auth.currentUser?.email,
+      post: post,
+      image: image,
+    });
+    sendnotifications(pushpost);
+  }
+  catch (e) {
+    alert("Information Missing!");
+  }
+};
 
-  //func to save posts to firebase and send push notifications
-  function create_post () {
-    try {
-      addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
-        timestamp: serverTimestamp(),
-        Email: auth.currentUser?.email,
-        post: post,
-        image: image,
-      });
-      sendnotifications(pushpost);
-    }
-    catch (e) {
-      alert("Information Missing!");
-    }
-  };
 
   /*
   const pickDoc = async () => {
@@ -189,6 +228,7 @@ const AddPosts = ({navigation}) => {
 */
 
 
+
 //Return all needed information and styles
   return (
     <View style = {styles.page} >
@@ -198,11 +238,21 @@ const AddPosts = ({navigation}) => {
       </View>
 
       <TopBanner/>
+      <FlatList
+
+        data = {users}
+        renderItem = {({item}) => (
+            <SafeAreaView>
+                
+                <Image source={{uri:item.image}} style={styles.profile_icon} />
+
+            </SafeAreaView>
+        )}
+
+      />  
       </SafeAreaView>
-      
-      <Image style={styles.profile_icon}
-       source={require('../assets/email_image.png')}>
-      </Image>
+
+
 
       <SafeAreaView style = {styles.flatlist}> 
       <ScrollView>
@@ -274,8 +324,8 @@ const AddPosts = ({navigation}) => {
 
     <TouchableOpacity
         style = {styles.input}
-        onPress = {create_post}
-        onPressOut={() =>navigation.navigate('Home')}
+        onPress={create_post}
+
     >
     <Text style={styles.create_post}>Create New Post</Text>
 
