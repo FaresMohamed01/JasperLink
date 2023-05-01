@@ -14,7 +14,7 @@ import { styles } from '../Style';
 const HomeScreen = ({navigation}) => {
   //Posts Array and Post query 
   const [posts, setPosts] = useState([]);
-  const posts_query = query (collectionGroup (db, 'posts'), where ("Email", "!=", auth.currentUser?.email),orderBy('Email'));
+  const posts_query = query (collectionGroup (db, 'posts'));
 
   
   //Refresh the page
@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}) => {
     
         setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
   }
- 
+
 
   return (
     <View  style = {styles.page}>
@@ -55,10 +55,13 @@ const HomeScreen = ({navigation}) => {
 
       <TopBanner/>
 
+      <Text style = {styles.home_text}>
+        Home
+      </Text>
+
        {refresh ? <ActivityIndicator/> : null}
 
       <SafeAreaView style = {styles.flatlist}>
-
       <FlatList 
         data = {posts}
         renderItem = {({item}) => (
@@ -66,22 +69,18 @@ const HomeScreen = ({navigation}) => {
             <View>
               <Text style = {styles.fontStyle}>
                 <View>
-                <Image style={styles.profile_icon}
-       source={require('../assets/MC_Round_Icon.png')}>
-      </Image>
-                  <Text selectable={true} style={styles.private_email}>
+                  <Image style={styles.profile_icon}
+                    source={require('../assets/email_image.png')}>
+                  </Image>
+                  
+                  <Text style={styles.private_email}>
                       {item.Email}
                   </Text>
             
-            </View> 
+                </View> 
 
-      <View>   
-        <Text>
-      {'\n\n'}<Image source={{uri:item.image}} style = {styles.image} />
-    
+      {'\n\n'}{item.image && <Image source={{uri:item.image}} style={styles.image} />}
       
-      </Text> 
-      </View>  
             <View>
               <Text style = {styles.like_text}>Like</Text>
               <Text style = {styles.comment_text}>Comment</Text>
@@ -94,7 +93,7 @@ const HomeScreen = ({navigation}) => {
         
         {'\n'}<View>
                 <Text style = {styles.abstract}>Description: </Text>
-                  <Text selectable = {true} style = {styles.users_post}>
+                  <Text style = {styles.users_post}>
                     {item.post}
                   </Text>
               </View>
