@@ -1229,8 +1229,8 @@ about_us_text:{
 },
 ///////////////////////////////////
 friends:{
-  top:70,
-  left:67,
+  top:10,
+  left:165,
 },
 follows:{
   left:300,
