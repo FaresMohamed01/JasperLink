@@ -50,7 +50,6 @@ const UserComments = ({navigation}) => {
           <TopHeaderBar navigation={navigation}/>
         </View>
   
-        <TopBanner/>
   
          {refresh ? <ActivityIndicator/> : null}
   
@@ -59,30 +58,30 @@ const UserComments = ({navigation}) => {
           data = {posts}
           renderItem = {({item}) => (
             <Pressable>
-              <View>
+              <View style = {styles.User_Comments_border}>
                 <Text>
                   <View>
                   <Image style={styles.profile_icon}
                     source={require('../assets/MC_Round_Icon.png')}>
                   </Image>
                     
-                    <Text selectable={true} style={styles.private_email}>
+                    <Text selectable={true} style={styles.User_Comments_private_email}>
                         {item.Email}
                     </Text>
               
               </View> 
   
             
-              {'\n'}{'\n'}<View>
-                  <Text style = {styles.abstract}>Description: </Text>
-                    <Text selectable={true} style = {styles.users_post}>
+              {'\n'}{'\n'}<View >
+                  <Text style = {styles.User_Comments_abstract}>Description: </Text>
+                    <Text selectable={true} style = {styles.User_Comments_users_post}>
                       {item.post}
                     </Text>
                 </View>
 
           {'\n'}{'\n'}<View>
-                  <Text style = {styles.abstract}>Comments: </Text>
-                    <Text selectable={true} style = {styles.users_post}>
+                  <Text style = {styles.User_Comments_abstract}>Comments: </Text>
+                    <Text selectable={true} style = {styles.User_Comments_users_post}>
                       {item.comment}
                     </Text>
                 </View>
