@@ -14,7 +14,7 @@ import { styles } from '../Style';
 const HomeScreen = ({navigation}) => {
   //Posts Array and Post query 
   const [posts, setPosts] = useState([]);
-  const posts_query = query (collection (db, `users/${!auth.currentUser?.email}/posts`));
+  const posts_query = query (collectionGroup (db, 'posts'), where ("Email", "!=", auth.currentUser?.email),orderBy('Email'));
 
   
   //Refresh the page
@@ -39,7 +39,7 @@ const HomeScreen = ({navigation}) => {
             Email,
             image,
             post,
-            users
+            users,
           })
         })
     
@@ -67,8 +67,8 @@ const HomeScreen = ({navigation}) => {
               <Text style = {styles.fontStyle}>
                 <View>
                 <Image style={styles.profile_icon}
-                    source={{uri:item.image}}>
-                  </Image>
+       source={require('../assets/MC_Round_Icon.png')}>
+      </Image>
                   <Text selectable={true} style={styles.private_email}>
                       {item.Email}
                   </Text>
