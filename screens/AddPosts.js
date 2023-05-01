@@ -232,27 +232,29 @@ const AddPosts = ({navigation}) => {
 //Return all needed information and styles
   return (
     <View style = {styles.page} >
-      <SafeAreaView>
+      
       <View>
         <TopHeaderBar navigation={navigation}/>
       </View>
-
-      <TopBanner/>
+      
+      
       <FlatList
-
+        style = {styles.add_post_border}
         data = {users}
         renderItem = {({item}) => (
-            <SafeAreaView>
-                
-                <Image source={{uri:item.image}} style={styles.profile_icon} />
+            
+          <View style = {styles.add_post_profile_icon_border}>
 
-            </SafeAreaView>
+                <Text style = {styles.add_post_profile_name}>
+                 New Post
+                </Text>
+
+          </View>
+           
         )}
 
       />  
-      </SafeAreaView>
-
-
+      
 
       <SafeAreaView style = {styles.flatlist}> 
       <ScrollView>
@@ -292,24 +294,8 @@ const AddPosts = ({navigation}) => {
       </View>
     </ TouchableOpacity>
 
-{/*
-    <TouchableOpacity onPress={pickDoc}>
-      <View style={styles.camera_border}>
-        
-          <Image style={styles.camera_icon}
-           source={require('../assets/doc.jpg')}>
-          </Image>
-          <Text style = {styles.camera_text}>
-            Document
-          </Text>
-
-      </View>
-
-    </TouchableOpacity>
-*/}
-
     <TouchableOpacity onPress={uploadImage}>
-      <View style={styles.camera_roll_border}>
+      <View style={styles.upload_border}>
 
         <Image style={styles.upload_image_icon}
          source={require('../assets/Upload.png')}>
