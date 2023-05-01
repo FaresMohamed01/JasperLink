@@ -3,7 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput, FlatList } from 'react-native';
 import {firebase} from '../firebase';
 import { getAuth} from 'firebase/auth';
-import {addDoc, collection, getFirestore, getDocs,query, where} from 'firebase/firestore';
+import {addDoc, updateDoc, doc, collection, getFirestore, getDocs,query, where} from 'firebase/firestore';
 import { serverTimestamp } from 'firebase/firestore';
 import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -203,7 +203,7 @@ const AddPosts = ({navigation}) => {
  //func to save posts to firebase and send push notifications
  function create_post () {
   try {
-    addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
+    addDoc(collection(db,`users/${auth.currentUser?.email}/`,"posts"),{
       timestamp: serverTimestamp(),
       Email: auth.currentUser?.email,
       post: post,
@@ -215,18 +215,6 @@ const AddPosts = ({navigation}) => {
     alert("Information Missing!");
   }
 };
-
-
-  /*
-  const pickDoc = async () => {
-    const set_image = await DocumentPicker.getDocumentAsync({});
-    if (!set_image.canceled) {
-      setImage(set_image.uri);
-    }
-    console.log(set_image.uri)
-  }
-*/
-
 
 
 //Return all needed information and styles
