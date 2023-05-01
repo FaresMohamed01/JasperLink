@@ -9,13 +9,13 @@ import PostCard from '../modules/PostCard';
 import TopHeaderBar from '../modules/TopHeaderBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '../Style';
-import { WebView } from 'react-native-webview';
 
-const HomeScreen = ({navigation, user}) => {
 
+const HomeScreen = ({navigation}) => {
   //Posts Array and Post query 
   const [posts, setPosts] = useState([]);
-  const posts_query = query (collectionGroup (db, 'posts'), orderBy('timestamp','desc'));
+  const posts_query = query (collection (db, `users/${!auth.currentUser?.email}/posts`));
+
   
   //Refresh the page
   const [refresh, setRefresh] = useState(true);
@@ -32,14 +32,14 @@ const HomeScreen = ({navigation, user}) => {
         setRefresh(false);
     
         posts.forEach((doc) => {
-          const {Email, image, post, Username} = doc.data()
+          const {Email, image, post,users} = doc.data()
         
           posts.push ({
             id: doc.id,
             Email,
             image,
             post,
-            Username,
+            users
           })
         })
     
@@ -67,7 +67,7 @@ const HomeScreen = ({navigation, user}) => {
               <Text style = {styles.fontStyle}>
                 <View>
                 <Image style={styles.profile_icon}
-                    source={require('../assets/MC_Round_Icon.png')}>
+                    source={{uri:item.image}}>
                   </Image>
                   <Text selectable={true} style={styles.private_email}>
                       {item.Email}
@@ -119,4 +119,3 @@ const HomeScreen = ({navigation, user}) => {
 };
 
 export default HomeScreen;
-
