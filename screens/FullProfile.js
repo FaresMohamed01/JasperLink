@@ -53,6 +53,12 @@ const FullProfile = ({navigation}) => {
 
         <TopHeaderBar navigation={navigation}/>
 
+        <View style = {styles.profile_top_text_border}>
+          <Text style = {styles.profile_top_text}>
+            Profile
+          </Text>
+        </View>
+
         <SafeAreaView style = {styles.flatlist}>
 
        <FlatList
@@ -60,10 +66,11 @@ const FullProfile = ({navigation}) => {
         data = {users}
         renderItem = {({item}) => (
             <View>
-                
+
+
+
                 <Image source={{uri:item.image}} style={styles.users_image} />
            
-
                 <Text>{'\n'}{'\n'}{'\n'}</Text>
             
            
