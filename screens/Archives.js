@@ -1,4 +1,4 @@
-//Bookmarks Page
+//Archives Page
 import React, { useState, useEffect }  from 'react';
 import {Pressable, FlatList, Text, Video, View, Image, ActivityIndicator, RefreshControl} from 'react-native';
 import {db, auth} from '../firebase';
@@ -12,11 +12,11 @@ import { styles } from '../Style';
 import { WebView } from 'react-native-webview';
 
 
-const Bookmarks = ({route, navigation}) => {
+const Archives = ({route, navigation}) => {
 
 //Posts Array and Post query 
 const [posts, setPosts] = useState([]);
-const posts_query = query (collectionGroup (db, 'posts'), where ("Email", "!=", auth.currentUser?.email),orderBy('Email','desc'));
+const posts_query = query (collectionGroup (db, 'posts'), where ("Email", "==", auth.currentUser?.email),orderBy('timestamp','desc'));
 
 //Refresh the page
 const [refresh, setRefresh] = useState(true);
@@ -111,4 +111,5 @@ return (
 
 };
 
-export default Bookmarks
+export default Archives
+
