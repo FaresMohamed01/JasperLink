@@ -271,13 +271,40 @@ flatlist:{
   flex:1,
 },
 
+home_text:{
+  fontSize:30,
+  textAlign:'center',
+  color:'white',
+  top:34,
+  backgroundColor:'#36454F',
+  padding:8,
+  marginBottom:-12
+},
+
+add_post_border:{
+  marginBottom:-720,
+},
+
+add_post_profile_icon_border:{
+  borderWidth:2,
+  height:55,
+  backgroundColor:'#36454F'
+},
+
+add_post_profile_name:{
+  fontSize:30,
+  textAlign:'center',
+  color:'white',
+  top:8
+},
+
 profile_icon:{
   height:25,
   width:25,
-  top:30,
+  top:20,
   left:15,
   borderRadius:40,
-  backgroundColor:'white'
+  backgroundColor:'white',
 },
 
 font:{
@@ -312,7 +339,7 @@ private_email:{
   fontSize:14,
   color:'white',
   fontFamily:'Verdana-Bold',
-  top:9,
+  bottom:1,
   left:50,
 },
 
@@ -477,7 +504,7 @@ upload_border:{
   width:150,
   height:60,
   left:127,
-  bottom:5,
+  bottom:25,
 },
 
 camera_roll_icon:{
@@ -556,6 +583,19 @@ full_profile_page:{
   flex: 1,
   backgroundColor: '#90ee90',
   textAlign: "center"
+},
+
+profile_top_text_border:{
+  borderWidth:1,
+  backgroundColor:'#36454F',
+  marginBottom:-46,
+  padding:8.5
+},
+
+profile_top_text:{
+  fontSize:30,
+  textAlign:'center',
+  color:'white',
 },
 
 users_image:{
@@ -752,7 +792,8 @@ menuText:{
 },
 
 TopBannerBorder:{
-  zIndex:1
+  zIndex:1,
+  marginBottom:-34
 },
 /////////////////////////////
 
@@ -765,6 +806,7 @@ profile_edit_title:{
   marginBottom:-45,
   color:'white',
   borderWidth:1,
+  backgroundColor:'#36454F'
 },
 
 Edit_Profile_Fname_Text:{
@@ -881,13 +923,12 @@ Edit_Profile_Save_Button:{
   left:120,
   borderRadius:20,
   backgroundColor:'#8A9A5B',
-  bottom:50,
+  top:20,
+  marginBottom:60
 },
 //////////////////////////////
 Enter_Comment:{
   borderWidth: 3,
-  //padding: 10,
-  //width:300,
   borderRadius:10,
   fontSize: 25,
   fontFamily: 'Noteworthy',
@@ -984,6 +1025,8 @@ Landing_Page_AboutUs_Text:{
   paddingTop:50,
   
 },
+
+
 ////////////////////////////
 Initial_SignUp_Image:{
   width:250,
@@ -1025,7 +1068,7 @@ Initial_SignUp_Email_Border:{
 /////////////////////////////
 
 search_bar:{
-  //paddingBottom:100,
+  padding:5,
   backgroundColor:'#023020',
 
 },
@@ -1104,10 +1147,11 @@ User_Comments_users_post:{
 direct_message_title:{
   textAlign:'center',
   borderWidth:2,
-  backgroundColor:'black',
-  fontSize:20,
-  padding:10,
+  backgroundColor:'#36454F',
+  fontSize:30,
+  padding:7,
   color:'white',
+
 },
 direct_message_text_border:{
   backgroundColor:'#36454F',
@@ -1131,8 +1175,9 @@ direct_message_profile_icon:{
 //////
 settings_top_text_border:{
   borderWidth:1,
-  backgroundColor:'black',
-  marginBottom:50
+  backgroundColor:'#36454F',
+  marginBottom:34,
+  padding:8.5
 },
 settings_top_text:{
   fontSize:30,
@@ -1144,24 +1189,24 @@ settings_text_border:{
   borderBottomWidth:1,
   borderColor:'grey',
   width:300,
-  marginLeft:53
+  marginLeft:53,
 },
 settings_text:{
   
   padding:10,
   fontSize:17,
-  color:'white'
+  color:'white',
 },
 settings_navs:{
   backgroundColor: `#93C572`,
   height:80,
-  marginTop:450,
+  marginTop:495,
 },
 /////
 about_us_navs:{
   backgroundColor: `#93C572`,
   height:70,
-  marginTop:60,
+  marginTop:98,
 },
 
 about_us_border:{
