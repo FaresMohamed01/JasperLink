@@ -5,7 +5,7 @@ import { collection, getDoc, getDocs, where, query, collectionGroup, orderBy } f
 import { auth } from '../firebase'
 import { async } from '@firebase/util'
 import TopHeaderBar from '../modules/TopHeaderBar'
-import ButtonNavBar from '../modules/ButtonNavBar'
+import ButtonNavBar from '../modules/NavBar'
 import { styles } from '../Style'
 
 
