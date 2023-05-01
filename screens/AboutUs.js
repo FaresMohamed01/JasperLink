@@ -5,7 +5,7 @@ import {auth, db} from '../firebase';
 import {collection, doc, where, query, updateDoc} from 'firebase/firestore';
 import { styles } from '../Style';
 import TopHeaderBar from '../modules/TopHeaderBar';
-import ButtonNavBar from '../modules/ButtonNavBar';
+import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AboutUs = ({navigation}) => {
