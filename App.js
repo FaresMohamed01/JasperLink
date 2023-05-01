@@ -27,7 +27,7 @@ import LandingScreen from './screens/LandingScreen';
 import InitialSignUp from './screens/InitialSignUp';
 import AboutUs from './screens/AboutUs';
 import Friends from './screens/Friends';
-import Bookmarks from './screens/Bookmarks';
+import Archives from './screens/Archives';
 
 const Stack = createNativeStackNavigator();
 
@@ -107,9 +107,9 @@ const App = ({navigation}) => {
 <Stack.Screen name="Friends" options={{
           headerShown: false
             }} component={Friends} />
-            <Stack.Screen name="Bookmarks" options={{
+            <Stack.Screen name="Archives" options={{
           headerShown: false
-            }} component={Bookmarks} />
+            }} component={Archives} />
  
  
       </Stack.Navigator>
