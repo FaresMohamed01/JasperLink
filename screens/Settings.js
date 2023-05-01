@@ -2,7 +2,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, SafeAreaView } fro
 import React from 'react'
 import { styles } from '../Style';
 import TopHeaderBar from '../modules/TopHeaderBar';
-import ButtonNavBar from '../modules/ButtonNavBar';
+import ButtonNavBar from '../modules/NavBar';
 
 const Settings = ({navigation}) => {
 
@@ -54,11 +54,13 @@ const Settings = ({navigation}) => {
     </ TouchableOpacity>
 
     <View style = {styles.settings_navs}>
-      <ButtonNavBar navigation={navigation}/>
+        <ButtonNavBar navigation={navigation}/>
     </View>
 
-
     </SafeAreaView>
+
+      
+
     </View>
   )
 }
