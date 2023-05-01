@@ -53,7 +53,13 @@ return (
       <TopHeaderBar navigation={navigation}/>
     </View>
 
-    <TopBanner/>
+    <View style = {styles.profile_top_text_border}>
+          <Text style = {styles.profile_top_text}>
+            Saved Posts
+          </Text>
+    </View>
+
+    
 
      {refresh ? <ActivityIndicator/> : null}
 
@@ -77,8 +83,8 @@ return (
 
     <View>   
       <Text>
-    {'\n\n'}<Image source={{uri:item.image}} style = {styles.image} />
-  
+    {'\n\n'}<Image source={{uri:item.image}} style={styles.image} />
+    {'\n\n'}
     
     </Text> 
     </View>  
@@ -112,4 +118,3 @@ return (
 };
 
 export default Archives
-
