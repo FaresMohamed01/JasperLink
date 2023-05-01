@@ -45,6 +45,12 @@ const Friends = ({route,navigation}) => {
       <View style =  {styles.page}>
   
           <TopHeaderBar navigation={navigation}/>
+
+          <View style = {styles.profile_top_text_border}>
+            <Text style = {styles.profile_top_text}>
+              Friend List
+            </Text>
+          </View>
   
           <SafeAreaView style = {styles.flatlist}>
   
