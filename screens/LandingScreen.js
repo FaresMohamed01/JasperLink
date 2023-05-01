@@ -7,12 +7,12 @@ import { styles } from '../Style';
 const LandingScreen = ({navigation}) => {
   return (
     <View style ={styles.page}>
-      <SafeAreaView>
-        
+      
         <View>
-        <TopHeaderBar navigation={navigation}/>
+          <TopHeaderBar navigation={navigation}/>
         </View>
-        
+      <SafeAreaView>
+
           <View >
 
             <Text style={styles.Landing_Page_Title}>Welcome to JasperLink</Text>
