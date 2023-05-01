@@ -81,27 +81,12 @@ const SearchProfiles = ({route,navigation}) => {
     if (auth.currentUser?.email != itemEmail && itemEmail != friend_query) {
       addDoc(collection(db,`friends/${auth.currentUser?.email}`, "friends"),{
         Email: auth.currentUser?.email,
-        Email2: itemEmail
+        Email2: itemEmail,
       });
       alert("Friend Added!");
     }
     else {
-      alert("Error!");
-    }
-
-  }
-
-  const addfollows = () => {
-
-    try {
-      addDoc(collection(db,`follows/${itemEmail}/`,"follows"),{
-        Email: auth.currentUser?.email,
-        Email2: itemEmail
-      });
-      alert("Followed!");
-    }
-    catch (e) {
-      alert("Information Missing!");
+      alert("Friend Invalid!");
     }
 
   }
@@ -126,28 +111,15 @@ const SearchProfiles = ({route,navigation}) => {
                 </Text>
 
                 <TouchableOpacity onPress={addfriends} style = {styles.friends}>
-          <MaterialCommunityIcons
-  
-            name={'account-plus'}
-            color = "green"
-            size={60}
+                   <MaterialCommunityIcons
+                      name={'account-plus'}
+                      color = "green"
+                      size={60}
             
-            />        
-          <Text style = {styles.friend}> Friend </Text>   
+                    />        
+                    <Text style = {styles.friend}> Friend </Text>   
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={addfollows} style = {styles.follows}>
-                  <MaterialCommunityIcons
-  
-                    name={'account-check'}
-                    color = 'green'
-                    size={60}
-                  />    
-
-                  <Text style = {styles.follow}> Follow </Text>   
-  
-                </TouchableOpacity>
-        
                 
                 <Text style = {styles.hold_profile_info}>
                   
