@@ -14,7 +14,7 @@ import { styles } from '../Style';
 const HomeScreen = ({navigation}) => {
   //Posts Array and Post query 
   const [posts, setPosts] = useState([]);
-  const posts_query = query (collectionGroup (db, 'posts'));
+  const posts_query = query (collectionGroup (db, 'posts'), orderBy("timestamp", "desc"));
 
   
   //Refresh the page
@@ -70,7 +70,7 @@ const HomeScreen = ({navigation}) => {
               <Text style = {styles.fontStyle}>
                 <View>
                   <Image style={styles.profile_icon}
-                    source={require('../assets/email_image.png')}>
+                    source={require('../assets/MC_Round_Icon.png')}>
                   </Image>
                   
                   <Text style={styles.private_email}>
