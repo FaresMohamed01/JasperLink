@@ -236,11 +236,12 @@ const Profile = ({navigation}) => {
     </ TouchableOpacity>
 
     <TouchableOpacity onPress={uploadImage}>
-      <View style={styles.camera_roll_border}>
+      <View style={styles.upload_border}>
 
         <Image style={styles.upload_image_icon}
          source={require('../assets/Upload.png')}>
         </Image>
+
         <Text style = {styles.upload_image_text}>
           Upload
         {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
