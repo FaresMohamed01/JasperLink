@@ -111,6 +111,8 @@ const SearchProfiles = ({route,navigation}) => {
 
         <TopHeaderBar navigation={navigation}/>
 
+        <Text style = {styles.profile_edit_title}> View Profile </Text>
+
         <SafeAreaView style = {styles.flatlist}>
 
        <FlatList
@@ -125,23 +127,23 @@ const SearchProfiles = ({route,navigation}) => {
                     {item.Name}
                 </Text>
 
-                <TouchableOpacity onPress={addfriends} style = {styles.friends}>
+                <TouchableOpacity onPress={addfriends} style = {styles.add_friend_image}>
                    <MaterialCommunityIcons
                       name={'account-plus'}
                       color = "green"
                       size={60}
                     />        
-                    <Text style = {styles.friend}>Add Friend </Text>   
+                    <Text style = {styles.add_friend_text}>Add Friend </Text>   
                 </TouchableOpacity>
 
-                 <TouchableOpacity onPress={removefriends} style = {styles.follows}>
+                 <TouchableOpacity onPress={removefriends} style = {styles.remove_friend_image}>
                    <MaterialCommunityIcons
                       name={'account-minus'}
                       color = "green"
                       size={60}
             
                     />        
-                    <Text style = {styles.follow}>Remove Friend </Text>   
+                    <Text style = {styles.remove_friend_text}>Remove Friend </Text>   
                 </TouchableOpacity>
 
                 
@@ -213,8 +215,5 @@ const SearchProfiles = ({route,navigation}) => {
     
   )
 }
-
-
- 
 
 export default SearchProfiles
