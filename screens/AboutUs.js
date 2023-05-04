@@ -22,10 +22,14 @@ const AboutUs = ({navigation}) => {
 
   return (
     <View style = {styles.page}>
+
         <View>
          <TopHeaderBar navigation={navigation}/>
         </View>
-    
+
+        <SafeAreaView style = {styles.flatlist}>
+
+      
         <View style={styles.about_us_border}>
 
        <Text style={styles.login_text}> About Us </Text>
@@ -41,9 +45,8 @@ const AboutUs = ({navigation}) => {
         </View>
 
        </View>
-       
+       </SafeAreaView>
 
-       
     <View style = {styles.about_us_navs}>
         <ButtonNavBar navigation={navigation}/>
     </View> 
