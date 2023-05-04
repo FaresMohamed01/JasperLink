@@ -79,11 +79,26 @@ const SearchProfiles = ({route,navigation}) => {
 
   const addfriends = () => {
     if (auth.currentUser?.email != itemEmail && itemEmail != friend_query) {
-      addDoc(collection(db,`friends/${auth.currentUser?.email}`, "friends"),{
+      setDoc(doc(db,`friends/${itemEmail}`),{
         Email: auth.currentUser?.email,
         Email2: itemEmail,
       });
       alert("Friend Added!");
+    }
+    else {
+      alert("Friend Invalid!");
+    }
+
+  }
+
+
+  const removefriends = () => {
+    if (auth.currentUser?.email != itemEmail && itemEmail != friend_query) {
+      updateDoc(doc(db,`friends/${itemEmail}`),{
+        Email:"",
+        Email2:" ",
+      });
+      alert("Friend Removed!");
     }
     else {
       alert("Friend Invalid!");
@@ -115,9 +130,18 @@ const SearchProfiles = ({route,navigation}) => {
                       name={'account-plus'}
                       color = "green"
                       size={60}
+                    />        
+                    <Text style = {styles.friend}>Add Friend </Text>   
+                </TouchableOpacity>
+
+                 <TouchableOpacity onPress={removefriends} style = {styles.follows}>
+                   <MaterialCommunityIcons
+                      name={'account-minus'}
+                      color = "green"
+                      size={60}
             
                     />        
-                    <Text style = {styles.friend}> Friend </Text>   
+                    <Text style = {styles.follow}>Remove Friend </Text>   
                 </TouchableOpacity>
 
                 
