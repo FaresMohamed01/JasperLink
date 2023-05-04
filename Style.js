@@ -608,10 +608,10 @@ users_image:{
 },
 
 profile_full_name:{
-  left:125,
   color:'white',
   fontSize:25,
   top:5,
+  textAlign:'center',
   
 },
 
@@ -1200,13 +1200,13 @@ settings_text:{
 settings_navs:{
   backgroundColor: `#93C572`,
   height:80,
-  marginTop:495,
+  bottom:8
 },
 /////
 about_us_navs:{
   backgroundColor: `#93C572`,
   height:70,
-  marginTop:98,
+  bottom:15
 },
 
 about_us_border:{
@@ -1215,7 +1215,7 @@ about_us_border:{
   width: 360,
   height: 610,
   alignSelf: 'center',
-  top:48
+  
 },
 about_us_text_border:{
   paddingLeft:20,
@@ -1228,23 +1228,35 @@ about_us_text:{
   fontFamily:'Sinhala Sangam MN'
 },
 ///////////////////////////////////
-friends:{
-  top:10,
-  left:165,
+add_friend_image:{
+  top:50,
+  left:80,
+  
 },
-follows:{
-  left:300,
-  bottom:15,
-},
-friend :{
+
+add_friend_text:{
   color:"white",
   fontSize:20,
-  fontFamily:'Sinhala Sangam MN'
+  fontFamily:'Sinhala Sangam MN',
+  textAlign:'center',
+  backgroundColor:'black',
+  width:140,
+  right:35
 },
-follow :{
+
+remove_friend_image:{
+  left:260,
+  bottom:37,
+},
+
+remove_friend_text:{
   color:"white",
   fontSize:20,
-  fontFamily:'Sinhala Sangam MN'
+  fontFamily:'Sinhala Sangam MN',
+  textAlign:'center',
+  backgroundColor:'black',
+  width:140,
+  right:35,
 }
 
 });
