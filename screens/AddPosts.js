@@ -1,128 +1,24 @@
-import React from 'react';
-import {useState, useEffect, useRef} from 'react';
+// Add Posts Feature Page
+import React, {useState, useEffect} from 'react';
 import {ActivityIndicator, Image, Button, ScrollView, Text, View, TouchableOpacity,TextInput, FlatList } from 'react-native';
 import {firebase} from '../firebase';
-import { getAuth} from 'firebase/auth';
-import {addDoc, collection, collectionGroup, getFirestore, getDocs,query, where} from 'firebase/firestore';
-import { serverTimestamp } from 'firebase/firestore';
-import ButtonNavBar from '../modules/NavBar';
+import {getAuth} from 'firebase/auth';
+import {addDoc, collection, getFirestore, serverTimestamp} from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import TopBanner from '../modules/TopBanner';
 import TopHeaderBar from '../modules/TopHeaderBar';
+import ButtonNavBar from '../modules/NavBar';
 import { styles } from '../Style';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 
 const AddPosts = ({navigation}) => {
-
   const auth = getAuth();
   const db = getFirestore();
-
-  const user = firebase.auth().currentUser;
 
   const [image, setImage] = useState(image)
   const [uploading, setUploading] = useState(false)
   const [post, setPost] = useState(post);
   const [permission, setPermission] = useState(null);
-
-  const [pushpost, setPushPost] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
   const [users, setUsers] = useState([]);
-  const user_query = query(collection(db,`users`),  where ("Email","==", auth.currentUser?.email));
-
-
-  useEffect(()=> {
-
-  async function document(){
-
-    const get_user = await getDocs(user_query) 
-
-    const users = []
-   
-    get_user.forEach((doc) => {
-
-      const { Email, Password, Name, GPA, first, last, information, major, school, image } = doc.data()
-
-      users.push ({
-        id: doc.id,
-        Email,
-        Password,
-        Name,
-        GPA,
-        first,
-        last,
-        information,
-        major,
-        school,
-        image
-      })
-
-    })
-
-    setUsers(get_user.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
-  }
-   
- 
-  document()
-  },[])
-
-   //Setting the notifications
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-      }),
-    });
-  
- //sending notifications
-  async function sendnotifications(pushpost) {
-    const send_message = {
-      to: pushpost,
-      title: auth.currentUser?.email,
-      body: 'Your Post is now live!' ,
-    };
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      body: JSON.stringify(send_message),
-    });
-  }
-
- //registering push notifications
-  async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-    } 
-  
-    return token;
-  }
-
-  //sending final notifications
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setPushPost(token));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
 
   //gets camera permissions
   useEffect(() => {
@@ -155,7 +51,6 @@ const AddPosts = ({navigation}) => {
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
     }
-    console.log(set_image.assets[0].uri)
   };
 
   //uploads image to firebase
@@ -200,62 +95,46 @@ const AddPosts = ({navigation}) => {
       }
       )
   }
+
  //func to save posts to firebase and send push notifications
- function create_post () {
+  function create_post () {
   try {
-    addDoc(collection(db,`posts/${auth.currentUser?.email}/`,"posts"),{
+    addDoc(collection(db,`posts/${post}/`,"posts"),{
       timestamp: serverTimestamp(),
       Email: auth.currentUser?.email,
       post: post,
       image: image,
     });
-    sendnotifications(pushpost);
+    alert("Post Saved!");
+    
+    setPost(null);
+    setImage(null)
   }
   catch (e) {
-    alert("Information Missing!");
+    alert("Post Missing!");
   }
-};
+  };
 
-
-  /*
-  const pickDoc = async () => {
-    const set_image = await DocumentPicker.getDocumentAsync({});
-    if (!set_image.canceled) {
-      setImage(set_image.uri);
-    }
-    console.log(set_image.uri)
-  }
-*/
-
-
-
-//Return all needed information and styles
+  //Return all needed information and styles
   return (
     <View style = {styles.page} >
       
       <View>
         <TopHeaderBar navigation={navigation}/>
       </View>
-      
-      
+       
       <FlatList
         style = {styles.add_post_border}
         data = {users}
         renderItem = {({item}) => (
-            
           <View style = {styles.add_post_profile_icon_border}>
-
-                <Text style = {styles.add_post_profile_name}>
-                 New Post
-                </Text>
-
+            <Text style = {styles.add_post_profile_name}>
+                New Post
+            </Text>
           </View>
-           
         )}
-
       />  
       
-
       <SafeAreaView style = {styles.flatlist}> 
       <ScrollView>
 
@@ -270,7 +149,7 @@ const AddPosts = ({navigation}) => {
       <Text>{'\n'} {'\n'}</Text>
 
     
-    <TouchableOpacity onPress={pickCamera}>
+      <TouchableOpacity onPress={pickCamera}>
         <View style={styles.camera_border}>
           <Image style={styles.camera_icon}
            source={require('../assets/camera_icon.png')}>
@@ -279,56 +158,54 @@ const AddPosts = ({navigation}) => {
             Camera
           </Text>
         </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
    
-    <TouchableOpacity onPress={pickImage}>
-      <View style={styles.camera_roll_border}>
+      <TouchableOpacity onPress={pickImage}>
+        <View style={styles.camera_roll_border}>
 
-        <Image style={styles.camera_roll_icon}
-         source={require('../assets/camera_roll_icon.png')}>
-        </Image>
-        <Text style = {styles.camera_roll_text}>
+          <Image style={styles.camera_roll_icon}
+            source={require('../assets/camera_roll_icon.png')}>
+          </Image>
+          <Text style = {styles.camera_roll_text}>
             Camera Roll
-        </Text>
+          </Text>
 
-      </View>
-    </ TouchableOpacity>
+        </View>
+      </ TouchableOpacity>
 
-    <TouchableOpacity onPress={uploadImage}>
-      <View style={styles.upload_border}>
+      <TouchableOpacity onPress={uploadImage}>
+        <View style={styles.upload_border}>
 
-        <Image style={styles.upload_image_icon}
-         source={require('../assets/Upload.png')}>
-        </Image>
-        <Text style = {styles.upload_image_text}>
-          Upload
-        {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
-        </Text>
+          <Image style={styles.upload_image_icon}
+           source={require('../assets/Upload.png')}>
+          </Image>
 
-      </View>
-    </TouchableOpacity>
+          <Text style = {styles.upload_image_text}>
+            Upload
+            {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
+          </Text>
 
-    <TouchableOpacity
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         style = {styles.input}
         onPress={create_post}
-
-    >
+      >
     <Text style={styles.create_post}>Create New Post</Text>
 
 
-    </TouchableOpacity>
+      </TouchableOpacity>
 
-  </ScrollView>
+      </ScrollView>
     
    
-  <View style = {styles.navs}>
-
-  <ButtonNavBar navigation={navigation}/>
-
+    <View style = {styles.navs}>
+      <ButtonNavBar navigation={navigation}/>
     </View>  
+
   </SafeAreaView>
-</View>
-    
+    </View>
   );
 }
 
