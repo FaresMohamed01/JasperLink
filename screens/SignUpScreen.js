@@ -84,6 +84,11 @@ const SignUpScreen = ({navigation}) => {
         }
         else {
           alert("Error")
+
+          setEmail(null)
+          setName(null)
+          setPassword(null)
+          setConfirmPassword(null)
         }
       })
       })
