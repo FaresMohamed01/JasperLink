@@ -1,24 +1,17 @@
-import { StyleSheet } from 'react-native'
-import React , {useCallback,useLayoutEffect,useEffect,useState, useRef}from 'react'
-import { GiftedChat, Bubble, SystemMessage, IMessage, Send, SendProps } from 'react-native-gifted-chat'
-import {collection, addDoc, orderBy, query, onSnapshot, where, getDocs, serverTimestamp} from 'firebase/firestore';
+//ChatRoom Page
+import React , {useCallback,useLayoutEffect,useState} from 'react'
+import { GiftedChat } from 'react-native-gifted-chat'
+import {collection, addDoc, orderBy, query, onSnapshot, where} from 'firebase/firestore';
 import {auth,db} from '../firebase';
-import { styles } from '../Style';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 
-const ChatRoom = ({user, route}) => {
+const ChatRoom = () => {
+    //Array to save messages
     const [messages, setMessages] = useState([]);
-    const [posts, setPosts] = useState(null)
-    const [users, setUsers] = useState(null)
-    const r_posts= query (collection (db, 'users'), where("Email","!=",auth.currentUser?.email));
-    
+
     useLayoutEffect(() => {
-      const collectionRef = collection(db, "chats");
-      const q = query(collectionRef , orderBy("createdAt", "desc"));
+      const chatting = query(collection(db, "chats") , orderBy("createdAt", "desc"));
   
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        console.log("querySnapshot unsusbscribe");
+      const unsubscribe = onSnapshot(chatting, (querySnapshot) => {
         setMessages(
           querySnapshot.docs.map((doc) => ({
             _id: doc.data()._id,
@@ -31,11 +24,11 @@ const ChatRoom = ({user, route}) => {
       return unsubscribe;
     }, []);
 
+    //Save messages to the database (chats) in firebase
     const onSend = useCallback((messages = []) => {
-      setMessages((previousMessages) =>
+        setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, messages)
-      );
-      // setMessages([...messages, ...messages]);
+       );
       const { _id, createdAt, text, user } = messages[0];
       addDoc(collection(db, "chats"), {
         _id,
@@ -45,27 +38,18 @@ const ChatRoom = ({user, route}) => {
       });
     }, []);
 
-
     return (
     
-      <GiftedChat
-      messages={messages}
-      showAvatarForEveryMessage={false}
-      showUserAvatar={false}
-      onSend={(messages) => onSend(messages)}
-      messagesContainerStyle={{
-        backgroundColor: "#fff",
-      }}
-      textInputStyle={{
-        backgroundColor: "#fff",
-        borderRadius: 20,
-      }}
-      user={{
-        _id: auth?.currentUser?.email,
-      }}
-    />
-  );
+        <GiftedChat
+          messages={messages}
+          onSend={(messages) => onSend(messages)}
+
+          user={{
+            _id: auth.currentUser?.email,
+          }}
+
+        />
+    );
 };
 
 export default ChatRoom;
-
