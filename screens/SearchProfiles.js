@@ -1,27 +1,29 @@
-import { StyleSheet, Text, View, FlatList,  Image, TouchableOpacity, TouchableHighlight } from 'react-native'
+//Other users profiles
 import React, { useState, useEffect } from 'react'
-import { query, collection, collectionGroup, where, getDocs, setDoc, addDoc, updateDoc, doc} from 'firebase/firestore';
+import { Text, View, FlatList,  Image, TouchableOpacity } from 'react-native'
+import { query, collection, collectionGroup, where, getDocs, setDoc, updateDoc, doc} from 'firebase/firestore';
 import { auth, db} from '../firebase';
 import { styles } from '../Style';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-elements';
 import TopHeaderBar from '../modules/TopHeaderBar';
 import ButtonNavBar from '../modules/NavBar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Friends from './Friends';
 
 
 const SearchProfiles = ({route,navigation}) => {
+
+  //Needed Fields 
   const { itemId } = route.params;
   const { itemEmail } = route.params;
   const { otherParam } = route.params;
   const [friends_array, setFriends_Array] = useState([]);
   const [users, setUsers] = useState([]);
+
   const user = query(collection(db,`users`),  where ("Email","==", itemEmail));
 
   const friend_query= query(collectionGroup(db,`friends`));
 
-  async function document(){
+  const document = async() => {
 
     const get_user = await getDocs(user) 
 
@@ -90,7 +92,6 @@ const SearchProfiles = ({route,navigation}) => {
     }
 
   }
-
 
   const removefriends = () => {
     if (auth.currentUser?.email != itemEmail && itemEmail != friend_query) {
@@ -198,13 +199,9 @@ const SearchProfiles = ({route,navigation}) => {
 
                     </Text>
                 </View>
-
-                
-
             </View>
         )}
-
-      />  
+       />  
 
     <View style = {styles.navs}>
         <ButtonNavBar navigation={navigation}/>
@@ -212,7 +209,6 @@ const SearchProfiles = ({route,navigation}) => {
     
         </SafeAreaView>
     </View>
-    
   )
 }
 
