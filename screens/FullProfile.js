@@ -1,31 +1,28 @@
-import { StyleSheet, Text, View, FlatList,  Image } from 'react-native'
+// Users Profile Page
 import React, { useState, useEffect } from 'react'
-import { query, collection, where, getDocs, doc} from 'firebase/firestore';
+import { Text, View, FlatList,  Image } from 'react-native'
+import { query, collection, where, getDocs} from 'firebase/firestore';
 import { auth, db} from '../firebase';
 import { styles } from '../Style';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-elements';
 import TopHeaderBar from '../modules/TopHeaderBar';
 import ButtonNavBar from '../modules/NavBar';
 
 const FullProfile = ({navigation}) => {
-  const [users, setUsers] = useState([]);
-  const user = query(collection(db,`users`),  where ("Email","==", auth.currentUser?.email));
+  const [profiles, setProfiles] = useState([]);
+  const profile = query(collection(db,`users`),  where ("Email","==", auth.currentUser?.email));
 
+  //Read appropriate Profile Data
+  const profile_data = async() => {
 
-  useEffect(()=> {
+    const get_profiles = await getDocs(profile) 
 
-  async function document(){
-
-    const get_user = await getDocs(user) 
-
-    const users = []
+    const profiles = []
    
-    get_user.forEach((doc) => {
-
+    get_profiles.forEach((doc) => {
       const { Email, Password, Name, GPA, first, last, information, major, school, image } = doc.data()
 
-      users.push ({
+      profiles.push ({
         id: doc.id,
         Email,
         Password,
@@ -38,19 +35,16 @@ const FullProfile = ({navigation}) => {
         school,
         image
       })
-
     })
-
-    setUsers(get_user.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+    setProfiles(get_profiles.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
   }
    
- 
-  document()
+  useEffect(()=> {
+    profile_data()
   },[])
 
   return (
     <View style =  {styles.page}>
-
         <TopHeaderBar navigation={navigation}/>
 
         <View style = {styles.profile_top_text_border}>
@@ -60,41 +54,28 @@ const FullProfile = ({navigation}) => {
         </View>
 
         <SafeAreaView style = {styles.flatlist}>
-
-       <FlatList
-
-        data = {users}
-        renderItem = {({item}) => (
+          <FlatList
+            data = {profiles}
+            renderItem = {({item}) => (
             <View>
-
-
-
-                <Image source={{uri:item.image}} style={styles.users_image} />
-           
-                <Text>{'\n'}{'\n'}{'\n'}</Text>
-            
-           
-                <Text style = {styles.profile_full_name}>
-                    {item.Name}
-                </Text>
-           
-            
+              <Image source={{uri:item.image}} style={styles.users_image} />
+              <Text>{'\n'}{'\n'}{'\n'}</Text>
+              <Text style = {styles.profile_full_name}>
+                  {item.Name}
+              </Text>
                 
-                <Text style = {styles.hold_profile_info}>
+              <Text style = {styles.hold_profile_info}>
                   
-                </Text>
+              </Text>
 
                 
-                <Text style = {styles.personal_info_text}>Personal Info</Text>
-                
-
-                <View style = {styles.profile_border1} >
-                    <Text >
-                        <Text>{'\n'}</Text>
-                          
-                        <Text style = {styles.username_text} >   Full Name: </Text>
-                        <Text style = {styles.username} >{item.Name}</Text>
-
+              <Text style = {styles.personal_info_text}>Personal Info</Text>
+              
+              <View style = {styles.profile_border1} >
+                <Text>
+                  <Text>{'\n'}</Text>
+                    <Text style = {styles.username_text} >   Full Name: </Text>
+                      <Text style = {styles.username} >{item.Name}</Text>
 
                         <Text>{'\n'}{'\n'}</Text>
 
@@ -106,9 +87,8 @@ const FullProfile = ({navigation}) => {
                         <Text style = {styles.school_text} >   School: </Text> 
                         <Text style = {styles.school} >{item.school}</Text>
 
-
-                    </Text>
-                </View>
+                </Text>
+              </View>
 
                 <Text style = {styles.about_me_text}>About Me</Text>
 
@@ -135,17 +115,15 @@ const FullProfile = ({navigation}) => {
                 
 
             </View>
-        )}
-
-      />  
-
-    <View style = {styles.navs}>
-        <ButtonNavBar navigation={navigation}/>
-    </View> 
+          )}
+          />
+      
+          <View style = {styles.navs}>
+            <ButtonNavBar navigation={navigation}/>
+          </View> 
     
         </SafeAreaView>
     </View>
-    
   )
 }
 
