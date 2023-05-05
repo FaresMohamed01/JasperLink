@@ -1,6 +1,6 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import {ScrollView, StyleSheet, Text, Button, View, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
+// Edit Profile Page
+import React, { useState, useEffect }  from 'react';
+import {ScrollView, Text, Button, View, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import {auth, db, firebase} from '../firebase';
 import {collection, doc, where, query, updateDoc} from 'firebase/firestore';
 import { styles } from '../Style';
@@ -8,12 +8,10 @@ import TopHeaderBar from '../modules/TopHeaderBar';
 import ButtonNavBar from '../modules/NavBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-
-
 
 const Profile = ({navigation}) => {
 
+  // Needed Edit Fields for User to change their profiles
   const [Email, setEmail] = useState(null);
   const [Username, setUsername] = useState(null);
   const [Password, setPassword] = useState(null);
@@ -22,17 +20,16 @@ const Profile = ({navigation}) => {
   const [major, setMajor] = useState(major);
   const [GPA, setGPA] = useState(GPA);
   const [information, setInformation] = useState(null);
+  
   const [image, setImage] = useState(image)
   const [uploading, setUploading] = useState(false)
-
-
+  const [permission, setPermission] = useState(null);
 
   const [users, setUsers] = useState([]);
-  const user = query(collection(db,"users"),  where ("Email","==", auth.currentUser?.email));
 
-
-    //creates a user in firebase
-    const ProfileFirestore = async ({navigation,users}) => {
+  //creates a user in firebase
+  const ProfileFirestore = async ({users}) => {
+      try{
         updateDoc(doc(db,`users/${auth.currentUser?.email}`),{
           Email: auth.currentUser?.email,
           Name: Name,
@@ -47,12 +44,15 @@ const Profile = ({navigation}) => {
   
         setUsers(users)
         alert("Information added!");
+      }
+      catch {
+        alert("Information missing!");
+      }
       
   
-    }
+  }
 
-    const [permission, setPermission] = useState(null);
-
+  //Functions to upload the profile picture to firebase
   useEffect(() => {
     (async () => {
       const perm_status = await ImagePicker.getCameraPermissionsAsync();
@@ -60,33 +60,27 @@ const Profile = ({navigation}) => {
     }) ();
   }, []);
 
-
   const pickImage = async () => {
-
     const set_image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
       allowsMultipleSelection: true
     });
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
     }
-
-    console.log(set_image.assets[0].uri)
   };
-  
   
   const pickCamera = async () => {
     
   const set_image = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
     if (!set_image.canceled) {
       setImage(set_image.assets[0].uri);
     }
-    console.log(set_image.assets[0].uri)
   };
 
   const uploadImage = async () => {
@@ -115,7 +109,7 @@ const Profile = ({navigation}) => {
       ()=>{
         setUploading(true)
       },
-      (error) => {
+      () => {
         setUploading(false)
         blob.close()
         return 
@@ -132,17 +126,15 @@ const Profile = ({navigation}) => {
   }
 
     
-     
-    return (
-      <View style = {styles.page}>
+  return (
+    <View style = {styles.page}>
+      <View>
+        <TopHeaderBar navigation={navigation}/>
+      </View>
   
-        <View>
-          <TopHeaderBar navigation={navigation}/>
-        </View>
+      <Text style = {styles.profile_edit_title}> Edit Profile </Text>
   
-        <Text style = {styles.profile_edit_title}> Edit Profile </Text>
-  
-        <SafeAreaView style = {styles.flatlist}>
+      <SafeAreaView style = {styles.flatlist}>
   
         <ScrollView>
   
@@ -151,128 +143,127 @@ const Profile = ({navigation}) => {
         </View>
   
   
-         <TextInput style = {styles.Edit_Profile_Fname}
-            value = {Name}
-            onChangeText={Name => setName(Name)}
-            autoCapitalize="none"
-            placeholder = "Full Name"
-            autoCorrect={false}
-            
-          />
-          <View>
-            <Text style = {styles.Edit_Profile_School_Text} >School</Text>
-          </View>
+        <TextInput style = {styles.Edit_Profile_Fname}
+          value = {Name}
+          onChangeText={Name => setName(Name)}
+          autoCapitalize="none"
+          placeholder = "Full Name"
+          autoCorrect={false}
+        />
+      
+        <View>
+          <Text style = {styles.Edit_Profile_School_Text} >School</Text>
+        </View>
   
-          <TextInput style = {styles.Edit_Profile_School}
-            value = {school}
-            onChangeText={school => setSchool(school)}
-            autoCapitalize="none"
-            placeholder = "School"
-            autoCorrect={false}
-          />
+        <TextInput style = {styles.Edit_Profile_School}
+          value = {school}
+          onChangeText={school => setSchool(school)}
+          autoCapitalize="none"
+          placeholder = "School"
+          autoCorrect={false}
+        />
           
-          <View>
-            <Text style = {styles.Edit_Profile_Major_Text}>Major</Text>
-          </View>
+        <View>
+          <Text style = {styles.Edit_Profile_Major_Text}>Major</Text>
+        </View>
   
-          <View>
-            <Text style = {styles.Edit_Profile_GPA_Text} >GPA</Text>
-          </View>
+        <View>
+          <Text style = {styles.Edit_Profile_GPA_Text} >GPA</Text>
+        </View>
   
-          <TextInput style = {styles.Edit_Profile_Major}
-            value = {major}
-            onChangeText={major => setMajor(major)}
-            autoCapitalize="none"
-            placeholder = "Major"
-            autoCorrect={false}
-          />
+        <TextInput style = {styles.Edit_Profile_Major}
+          value = {major}
+          onChangeText={major => setMajor(major)}
+          autoCapitalize="none"
+          placeholder = "Major"
+          autoCorrect={false}
+        />
   
-          <TextInput style = {styles.Edit_Profile_GPA}
-            value = {GPA}
-            onChangeText={GPA => setGPA(GPA)}
-            autoCapitalize="none"
-            placeholder = "GPA"
-            autoCorrect={false}
-          />
+        <TextInput style = {styles.Edit_Profile_GPA}
+          value = {GPA}
+          onChangeText={GPA => setGPA(GPA)}
+          autoCapitalize="none"
+          placeholder = "GPA"
+          autoCorrect={false}
+        />
   
-          <View>
-            <Text style = {styles.Edit_Profile_Info_Text} >Additional Information</Text>
-          </View>
+        <View>
+          <Text style = {styles.Edit_Profile_Info_Text} >Additional Information</Text>
+        </View>
   
-          <TextInput style = {styles.Edit_Profile_Info}
-            value = {information}
-            onChangeText={information => setInformation(information)}
-            autoCapitalize="none"
-            placeholder = "Additional Research, Notes, and etc..."
-            autoCorrect={false}
-          />
+        <TextInput style = {styles.Edit_Profile_Info}
+          value = {information}
+          onChangeText={information => setInformation(information)}
+          autoCapitalize="none"
+          placeholder = "Additional Research, Notes, and etc..."
+          autoCorrect={false}
+        />
 
-<TouchableOpacity onPress={pickCamera}>
-      <View style={styles.camera_border}>
+        <TouchableOpacity onPress={pickCamera}>
+          <View style={styles.camera_border}>
         
-          <Image style={styles.camera_icon}
-           source={require('../assets/camera_icon.png')}>
-          </Image>
-          <Text style = {styles.camera_text}>
-            Camera
-          </Text>
+            <Image style={styles.camera_icon}
+              source={require('../assets/camera_icon.png')}>
+            </Image>
+            
+            <Text style = {styles.camera_text}>
+                Camera
+            </Text>
 
-      </View>
+          </View>
 
-    </TouchableOpacity>
+        </TouchableOpacity>
     
    
-    <TouchableOpacity onPress={pickImage}>
-      <View style={styles.camera_roll_border}>
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.camera_roll_border}>
 
-        <Image style={styles.camera_roll_icon}
-         source={require('../assets/camera_roll_icon.png')}>
-        </Image>
-        <Text style = {styles.camera_roll_text}>
-            Camera Roll
-        </Text>
+            <Image style={styles.camera_roll_icon}
+              source={require('../assets/camera_roll_icon.png')}>
+            </Image>
+        
+            <Text style = {styles.camera_roll_text}>
+                Camera Roll
+            </Text>
 
-      </View>
-    </ TouchableOpacity>
+          </View>
+        </ TouchableOpacity>
 
-    <TouchableOpacity onPress={uploadImage}>
-      <View style={styles.upload_border}>
+        <TouchableOpacity onPress={uploadImage}>
+          <View style={styles.upload_border}>
 
-        <Image style={styles.upload_image_icon}
-         source={require('../assets/Upload.png')}>
-        </Image>
+            <Image style={styles.upload_image_icon}
+              source={require('../assets/Upload.png')}>
+            </Image>
 
-        <Text style = {styles.upload_image_text}>
-          Upload
-        {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
-        </Text>
+            <Text style = {styles.upload_image_text}>
+                Upload
+                {!uploading ? <Button title='' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
+            </Text>
 
-      </View>
-    </ TouchableOpacity>
+          </View>
+        </ TouchableOpacity>
 
           
-          <View style = {styles.Edit_Profile_Save_Button}>
-            <Button 
-              color = {'white'}
-              title = "Save Information"
-              onPress={ProfileFirestore}
+        <View style = {styles.Edit_Profile_Save_Button}>
+          <Button 
+            color = {'white'}
+            title = "Save Information"
+            onPress={ProfileFirestore}
               
-            />
-          </View>
+          />
+        </View>
   
-          </ScrollView>
+        </ScrollView>
   
-          <View style = {styles.navs}>
+        <View style = {styles.navs}>
+          <ButtonNavBar navigation={navigation}/>
+        </View> 
   
-            <ButtonNavBar navigation={navigation}/>
-  
-          </View> 
-  
-          </SafeAreaView>  
-      </View>
+      </SafeAreaView>  
+    </View>
       
-      
-    )
-  }
+  )
+}
     
   export default Profile
