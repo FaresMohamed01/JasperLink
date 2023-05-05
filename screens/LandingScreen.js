@@ -7,10 +7,11 @@ import { styles } from '../Style';
 const LandingScreen = ({navigation}) => {
   return (
     <View style ={styles.page}>
-      
+
         <View>
           <TopHeaderBar navigation={navigation}/>
         </View>
+      
       <SafeAreaView>
 
           <View >
