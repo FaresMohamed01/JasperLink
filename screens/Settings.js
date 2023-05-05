@@ -1,4 +1,5 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, SafeAreaView } from 'react-native'
+//Settings Page
+import { Text, View, TouchableOpacity, SafeAreaView } from 'react-native'
 import React from 'react'
 import { styles } from '../Style';
 import TopHeaderBar from '../modules/TopHeaderBar';
@@ -7,14 +8,11 @@ import ButtonNavBar from '../modules/NavBar';
 const Settings = ({navigation}) => {
 
   const SignOut = () =>  {
-
     SignOut(auth)
     .then(() => {
         navigation.navigate("Login")
-    })
-
-    .catch(error => alert(error.message))
-}
+    }).catch(error => alert(error.message))
+  }
 
   return (
     <View style = {styles.page}>
@@ -53,17 +51,16 @@ const Settings = ({navigation}) => {
       <Text style={styles.settings_text}>Sign Out</Text>
     </ TouchableOpacity>
 
+    </SafeAreaView>
+
     <View style = {styles.settings_navs}>
         <ButtonNavBar navigation={navigation}/>
     </View>
-
-    </SafeAreaView>
 
       
 
     </View>
   )
 }
-
 
 export default Settings
