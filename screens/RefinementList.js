@@ -1,6 +1,6 @@
 //Filtering the Results
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, SafeAreaView } from 'react-native';
 import PropTypes from 'prop-types';
 import { connectRefinementList } from 'react-instantsearch-native';
 import ButtonNavBar from '../modules/NavBar';
@@ -10,8 +10,8 @@ import { styles } from '../Style';
 const RefinementList = ({ items, refine }) => {
   return (
     <SafeAreaView style={styles.page}>
-          <View>
-            {items.map(item => {
+        <View>
+          {items.map(item => {
               const labelStyle = {
                 fontSize: 54,
                 fontWeight: item.isRefined ? '800' : '400',
@@ -30,8 +30,7 @@ const RefinementList = ({ items, refine }) => {
       
         </View>
     </SafeAreaView>
-  );
-  
+  )
 };
 
 //PropTypes 
